@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextLabel" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColorHint">#4285F4</item>
+        <item name="colorAccent">#4285F4</item>
+        <item name="colorControlNormal">#4285F4</item>
+        <item name="colorControlActivated">#4285F4</item>
+    </style>
+</resources>
