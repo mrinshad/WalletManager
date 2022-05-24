@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/partyLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PartyActivity">
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".Party">
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/addPartyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="addParty"
+        android:text="Add party" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MORE FEATURES COMING SOON"
+        android:layout_below="@id/addPartyButton"/>
+
+</LinearLayout>

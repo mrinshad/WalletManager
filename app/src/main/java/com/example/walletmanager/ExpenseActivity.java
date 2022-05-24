@@ -205,9 +205,6 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
-//    public void setDate(View view) {
-//
-//    }
 
     @Override
     protected Dialog onCreateDialog(int id) {

@@ -48,60 +48,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addExpense(View v) {
-//        final Dialog dialog2 = new Dialog(MainActivity.this);
-//        dialog2.setContentView(R.layout.add_amount);
-//
-//        TextInputLayout empPassword = (TextInputLayout) dialog2.findViewById(R.id.admin_code_edt);
-//        empPassword.setHint("Enter Admin code");
-//        Button saveBtn = (Button) dialog2.findViewById(R.id.save_btn);
-//        Button cancelBtn = (Button) dialog2.findViewById(R.id.cancel_btn);
-//
-//        saveBtn.setOnClickListener(new View.OnClickListener() {
-//            @RequiresApi(api = Build.VERSION_CODES.O)
-//            @Override
-//            public void onClick(View v) {
-//                TextInputLayout empPassword = (TextInputLayout) dialog2.findViewById(R.id.admin_code_edt);
-//
-//                String empPass = empPassword.getEditText().getText().toString();
-//                if (empPass == null || empPass.equals("")) {
-//                    empPassword.setError("Please input Amount");
-//                } else {
-//                    addAmount(empPass);
-//                }
-//                dialog2.dismiss();
-//            }
-//        });
-//
-//        cancelBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dialog2.dismiss();
-//            }
-//
-//
-//        });
-//        dialog2.show();
-
-        startActivity(new Intent(getApplicationContext(),ExpenseActivity.class));
-
+        startActivity(new Intent(getApplicationContext(), ExpenseActivity.class));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void addAmount(String amount) {
 
         String party = "";
-        mydb = openOrCreateDatabase(db.DBNAME,0,null);
-        mydb.execSQL("INSERT INTO EXPENSE (date,time,party_name,amount) VALUES ('"+date+"','"+currTime+"','"+party+"','"+amount+"')");
+        mydb = openOrCreateDatabase(db.DBNAME, 0, null);
+        mydb.execSQL("INSERT INTO EXPENSE (date,time,party_name,amount) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amount + "')");
         mydb.close();
-        Snackbar.make(layout,"Expense added !!",Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(layout, "Expense added !!", Snackbar.LENGTH_SHORT).show();
     }
 
-    public void getReports(View v){
-        Snackbar.make(layout,"Feature not available yet !!",Snackbar.LENGTH_SHORT).show();
+    public void getReports(View v) {
+        Snackbar.make(layout, "Feature not available yet !!", Snackbar.LENGTH_SHORT).show();
     }
 
-    public void partyDetails(View v){
-
-        Snackbar.make(layout,"Feature not available yet !!",Snackbar.LENGTH_SHORT).show();
+    public void partyDetails(View v) {
+        startActivity(new Intent(getApplicationContext(), Party.class));
+//        Snackbar.make(layout,"Feature not available yet !!",Snackbar.LENGTH_SHORT).show();
     }
 }
