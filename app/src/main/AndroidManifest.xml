@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WalletManager">
         <activity
+            android:name=".Borrow"
+            android:exported="false" />
+        <activity
             android:name=".Party"
             android:exported="false" />
         <activity

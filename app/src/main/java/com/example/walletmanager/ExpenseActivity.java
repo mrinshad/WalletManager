@@ -34,8 +34,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,6 +47,7 @@ public class ExpenseActivity extends AppCompatActivity {
     FloatingActionButton mAddFab, mAddAlarmFab, mAddPersonFab;
     TextView addAlarmActionText, addPersonActionText;
     Boolean isAllFabsVisible;
+    Button partyButton;
 
     ArrayAdapter<String> adapter2;
     String[] arraylist;
@@ -53,12 +57,18 @@ public class ExpenseActivity extends AppCompatActivity {
     EditText textPartySearch;
     TextView partyName, dateView;
     TextInputLayout amountInputLayout, narrationInputLayout;
-    String amountString, narrationString;
-    int day, month, year;
+    String amountString, narrationString, dateFinal;
+    String day, month, year;
     MaterialDatePicker.Builder materialDateBuilder;
     private Calendar calendar;
+    Date c = new Date();
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat time = new SimpleDateFormat("hh:mm a");
+    String currTime = time.format(c);
+    StringBuilder date;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
@@ -66,13 +76,20 @@ public class ExpenseActivity extends AppCompatActivity {
         layout = findViewById(R.id.expenselayout);
 
         // DATE PICKER
-        calendar = Calendar.getInstance();
-        year = calendar.get(Calendar.YEAR);
-        dateView = findViewById(R.id.dateTextView);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
-        showDate(year, month + 1, day);
-
+        try {
+            calendar = Calendar.getInstance();
+            year = String.valueOf(calendar.get(Calendar.YEAR));
+            dateView = findViewById(R.id.dateTextView);
+            int newMonth = calendar.get(Calendar.MONTH) + 1;
+            int newDay = calendar.get(Calendar.DAY_OF_MONTH);
+            month = db.dateOrTimeConverter(newMonth);
+            day = db.dateOrTimeConverter(newDay);
+            showDate(year, month, day);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Activity componnets
+        partyButton = findViewById(R.id.selectPartyButton);
 
         // FAB button
         mAddFab = findViewById(R.id.add_fab);
@@ -131,49 +148,58 @@ public class ExpenseActivity extends AppCompatActivity {
                 });
     }
 
-    private void showDate(int year, int month, int day) {
-        dateView.setText(new StringBuilder().append(day).append("/")
-                .append(month).append("/").append(year));
+    private void showDate(String year, String month, String day) {
+        try {
+            date = new StringBuilder().append(year).append("-")
+                    .append(month).append("-").append(day);
+            dateFinal = df.format(df.parse(date.toString()));
+            dateView.setText(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public void selectParty(View v) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        View convertView = (View) inflater.inflate(R.layout.select_party_list, null);
-        alertDialog.setView(convertView);
+        try {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            LayoutInflater inflater = getLayoutInflater();
+            View convertView = (View) inflater.inflate(R.layout.select_party_list, null);
+            alertDialog.setView(convertView);
 
-        ListView lv = (ListView) convertView.findViewById(R.id.listView);
+            ListView lv = (ListView) convertView.findViewById(R.id.listView);
 //        listAdapter = new CustomNewInvoiceAdapter(this, R.layout.batch_sales_list, new ArrayList<OrderListModel>());
-        adapter2 = new ArrayAdapter<String>(this, R.layout.party_list, getPartyList());
-        lv.setAdapter(adapter2);
-        textPartySearch = (EditText) convertView.findViewById(R.id.partySearch);
-        textPartySearch.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-            }
+            adapter2 = new ArrayAdapter<String>(this, R.layout.party_list, getPartyList());
+            lv.setAdapter(adapter2);
+            textPartySearch = (EditText) convertView.findViewById(R.id.partySearch);
+            textPartySearch.addTextChangedListener(new TextWatcher() {
+                public void afterTextChanged(Editable s) {
+                }
 
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-            }
+                public void beforeTextChanged(CharSequence s, int start, int count,
+                                              int after) {
+                }
 
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
-                adapter2.getFilter()
-                        .filter(textPartySearch.getText().toString());
-            }
-        });
-        final AlertDialog ad = alertDialog.show();
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter1, View v, int position, long arg3) {
-//                String value = (String) adapter1.getItemAtPosition(position);
-//                partySelectBtn.setText(value);
+                public void onTextChanged(CharSequence s, int start, int before,
+                                          int count) {
+                    adapter2.getFilter()
+                            .filter(textPartySearch.getText().toString());
+                }
+            });
+            final AlertDialog ad = alertDialog.show();
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapter1, View v, int position, long arg3) {
+                    String value = (String) adapter1.getItemAtPosition(position);
+                    partyButton.setText(value);
 //                partyName = value;
 //                getBalance();
-//                ad.dismiss();
+                    ad.dismiss();
 
-            }
-        });
-
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -197,11 +223,22 @@ public class ExpenseActivity extends AppCompatActivity {
     }
 
     public void saveButton(View v) {
+        try {
+            amountString = amountInputLayout.getEditText().getText().toString();
+            narrationString = narrationInputLayout.getEditText().getText().toString();
+            String date = dateFinal;
+            String party = partyButton.getText().toString();
+            if (amountString.isEmpty()) {
+                amountInputLayout.setError("Field cannot be empty");
+                return;
+            }
 
-        amountString = amountInputLayout.getEditText().getText().toString();
-        narrationString = narrationInputLayout.getEditText().getText().toString();
-        if (amountString.isEmpty()) {
-            amountInputLayout.setError("Field cannot be empty");
+            mydb = openOrCreateDatabase(db.DBNAME, 0, null);
+            mydb.execSQL("INSERT INTO EXPENSE (date,time,party_name,amount) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amountString + "')");
+            mydb.close();
+            Snackbar.make(layout, "Expense recorded", Snackbar.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -211,7 +248,7 @@ public class ExpenseActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         if (id == 999) {
             return new DatePickerDialog(this,
-                    myDateListener, year, month, day);
+                    myDateListener, Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
         }
         return null;
     }
@@ -223,9 +260,9 @@ public class ExpenseActivity extends AppCompatActivity {
                                       int arg1, int arg2, int arg3) {
                     // TODO Auto-generated method stub
                     // arg1 = year
-                    // arg2 = month
+                    arg2 = arg2 + 1;
                     // arg3 = day
-                    showDate(arg1, arg2 + 1, arg3);
+                    showDate(String.valueOf(arg1), String.valueOf(arg2), String.valueOf(arg3));
                 }
             };
 

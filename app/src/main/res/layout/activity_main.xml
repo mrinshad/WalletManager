@@ -19,6 +19,7 @@
         android:gravity="center">
 
         <TextView
+            android:id="@+id/mainExpenseDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="₹0.00"
@@ -28,10 +29,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"
+        android:layout_above="@+id/companyName"
         android:orientation="vertical">
 
         <LinearLayout
@@ -55,6 +56,7 @@
                 android:layout_marginRight="2dp"
                 android:layout_marginLeft="2dp"
                 android:layout_weight="5"
+                android:onClick="borrowDetails"
                 android:text="borrowed" />
         </LinearLayout>
 
@@ -80,6 +82,21 @@
                 android:onClick="getReports"
                 android:text="reports" />
         </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/companyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="powered by Mohammed Rinshad P"
+            android:gravity="end"
+            android:textStyle="italic"/>
     </LinearLayout>
 
 </RelativeLayout>

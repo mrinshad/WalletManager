@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -19,15 +20,16 @@ public class Party extends AppCompatActivity {
 
     SQLiteDatabase mydb;
     DBManager db = new DBManager();
-    RelativeLayout layout;
+    LinearLayout layout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_party);
-    layout = findViewById(R.id.partyLayout);
+        layout = findViewById(R.id.partyLayout);
     }
 
-    public void addParty(View v){
+    public void addParty(View v) {
         try {
             final Dialog dialog2 = new Dialog(Party.this);
             dialog2.setContentView(R.layout.add_party);
@@ -72,9 +74,9 @@ public class Party extends AppCompatActivity {
                     mydb.execSQL("INSERT INTO PARTY (name,balance) VALUES ('" + partyName + "'," + Double.parseDouble(partyAmount) + ")");
                     mydb.close();
 
-                    Snackbar.make(layout,"Party Added successfully",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(layout, "Party Added successfully", Snackbar.LENGTH_SHORT).show();
 
-                dialog2.dismiss();
+                    dialog2.dismiss();
                 }
             });
 
@@ -87,8 +89,8 @@ public class Party extends AppCompatActivity {
 //
 //        });
             dialog2.show();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-}
+    }
 }
