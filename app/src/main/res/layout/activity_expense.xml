@@ -9,14 +9,14 @@
     tools:context=".ExpenseActivity"
     tools:ignore="HardcodedText">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:background="@drawable/party_button"
+        android:gravity="center_horizontal"
         android:orientation="horizontal">
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <Button
         android:id="@+id/selectPartyButton"
@@ -24,7 +24,7 @@
         android:layout_height="60dp"
         android:layout_below="@+id/toolbar"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="25dp"
         android:layout_marginRight="20dp"
         android:onClick="selectParty"
         android:text="PARTY" />

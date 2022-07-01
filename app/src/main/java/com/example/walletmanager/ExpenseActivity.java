@@ -228,15 +228,20 @@ public class ExpenseActivity extends AppCompatActivity {
             narrationString = narrationInputLayout.getEditText().getText().toString();
             String date = dateFinal;
             String party = partyButton.getText().toString();
+            if (party.equals("PARTY")) {
+                Snackbar.make(layout, "Please select a party", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
             if (amountString.isEmpty()) {
                 amountInputLayout.setError("Field cannot be empty");
                 return;
             }
 
             mydb = openOrCreateDatabase(db.DBNAME, 0, null);
-            mydb.execSQL("INSERT INTO EXPENSE (date,time,party_name,amount) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amountString + "')");
+            mydb.execSQL("INSERT INTO EXPENSE (date,time,party_name,amount,narration) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amountString + "','" + narrationString + "')");
             mydb.close();
             Snackbar.make(layout, "Expense recorded", Snackbar.LENGTH_SHORT).show();
+            finish();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.walletmanager.Reports.ExpenseReport;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -64,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
         getTodayDate();
     }
 
+    private void getToast() {
+
+    }
+
     private void getTodayDate() {
         calendar = Calendar.getInstance();
         year = String.valueOf(calendar.get(Calendar.YEAR));
@@ -87,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
             if (allrows.moveToFirst()) {
                 do {
                     Log.d("TAG", "getExpense: on date:"+date1+" amount: "+"₹"+allrows.getString(0));
-                    mainExpenseDisplay.setText("₹"+allrows.getString(0));
+                    String amount = "0.00";
+                    if (allrows.getString(0) != null) {
+                        amount = allrows.getString(0);
+                    }
+                    mainExpenseDisplay.setText("₹"+amount);
                 } while (allrows.moveToNext());
             }
         } catch (Exception e) {
@@ -99,7 +108,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(getApplicationContext(), ExpenseActivity.class));
     }
     public void borrowDetails(View v){
-        startActivity(new Intent(getApplicationContext(), Borrow.class));
+        Snackbar.make(layout,"Feature not available yet !!",Snackbar.LENGTH_SHORT).show();
+//        startActivity(new Intent(getApplicationContext(), Borrow.class));
     }
 
 //    @RequiresApi(api = Build.VERSION_CODES.O)
@@ -113,7 +123,8 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     public void getReports(View v) {
-        Snackbar.make(layout, "Feature not available yet !!", Snackbar.LENGTH_SHORT).show();
+        startActivity(new Intent(getApplicationContext(), ExpenseReport.class));
+//        Snackbar.make(layout, "Feature not available yet !!", Snackbar.LENGTH_SHORT).show();
     }
 
     public void partyDetails(View v) {
