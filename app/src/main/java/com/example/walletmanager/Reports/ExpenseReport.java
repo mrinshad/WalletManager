@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.example.walletmanager.DBManager;
@@ -28,11 +30,13 @@ public class ExpenseReport extends AppCompatActivity {
         getSupportActionBar().hide();
         getExpenseDataFromDB();
 
-//        adapter = new SimpleAdapter(this, arrayList,
-//                R.layout.sales_details_row, new String[]{"sino", "party",
-//                "date", "billno",}, new int[]{
-//                R.id.sino, R.id.party, R.id.date, R.id.billno,
-//                R.id.net, R.id.coimg});
+        ListView listView = findViewById(R.id.listView);
+        adapter = new SimpleAdapter(this, arrayList,
+                R.layout.list_report_expense, new String[]{"sino", "party",
+                "narration", "amount",}, new int[]{
+                R.id.idTextView, R.id.partyNameTextView, R.id.narrationTextView, R.id.amountTextView});
+
+        listView.setAdapter(adapter);
     }
 
     private void getExpenseDataFromDB() {
@@ -60,12 +64,15 @@ public class ExpenseReport extends AppCompatActivity {
 
             expenseData = new HashMap<String, String>();
 
-            expenseData.put("sino", " " + String.valueOf(x + 1));
+            expenseData.put("sino", " " + String.valueOf(x + 1)+".");
             expenseData.put("party", expenseDetial.getPatyName());
             expenseData.put("narration", expenseDetial.getNarration());
-            expenseData.put("amount", String.valueOf(expenseDetial.getAmount()));
+            expenseData.put("amount", String.valueOf("₹" + expenseDetial.getAmount()));
 
             arrayList.add(expenseData);
         }
+    }
+    public void goBack(View v){
+        finish();
     }
 }

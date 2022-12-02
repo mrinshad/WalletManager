@@ -9,19 +9,35 @@
     <RelativeLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="54dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:background="@drawable/party_button"
         android:orientation="horizontal">
+
+        <View
+            android:id="@+id/backButton"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_margin="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:onClick="goBack"
+            android:background="@drawable/ic_baseline_arrow_back_24" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_toRightOf="@+id/backButton"
             android:text="Expense Report"
+            android:textSize="16dp"
             android:textColor="@color/white"
             android:textStyle="bold" />
 
@@ -35,51 +51,16 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/round_corners12dp"
             android:padding="2dp">
-
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
         </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/relative2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="5dp"
-            android:layout_toStartOf="@+id/relative1"
-            android:layout_toLeftOf="@+id/relative1"
-            android:background="@drawable/round_corners12dp"
-            android:padding="2dp">
-
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/relative3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="5dp"
-            android:layout_toStartOf="@+id/relative2"
-            android:layout_toLeftOf="@+id/relative2"
-            android:background="@drawable/round_corners12dp"
-            android:padding="2dp">
-
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
-
 
     </RelativeLayout>
 
     <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar" />
+        android:layout_below="@id/toolbar"
+        android:layout_margin="6dp"
+        android:divider="@null"
+        android:dividerHeight="0dp" />
 </RelativeLayout>

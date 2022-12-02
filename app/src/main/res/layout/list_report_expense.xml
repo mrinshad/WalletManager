@@ -1,24 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/purple_500">
+    android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="5dp" />
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="5dp" />
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="5dp" />
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="5dp" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="6dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_baseline_person_24"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="100">
+
+                    <TextView
+                        android:id="@+id/idTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="id"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/partyNameTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_toEndOf="@+id/idTextView"
+                        android:layout_toRightOf="@+id/idTextView"
+                        android:text="party"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/amountTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="amount"
+                        android:textSize="20sp" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                    <TextView
+                        android:id="@+id/narrationTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="25"
+                        android:text="narration"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>

@@ -2,10 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:id="@+id/layout"
     android:orientation="vertical"
     tools:context=".MainActivity"
     tools:ignore="HardcodedText">
@@ -16,7 +16,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginTop="49dp"
+        android:orientation="vertical"
         android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This month:" />
 
         <TextView
             android:id="@+id/mainExpenseDisplay"
@@ -29,10 +35,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
         android:layout_above="@+id/companyName"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="50dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -44,17 +50,17 @@
             <Button
                 android:layout_width="0dp"
                 android:layout_height="100sp"
-                android:layout_marginRight="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
                 android:layout_weight="5"
-                android:text="EXPENSE"
-                android:onClick="addExpense"/>
+                android:onClick="addExpense"
+                android:text="EXPENSE" />
 
             <Button
                 android:layout_width="0dp"
                 android:layout_height="100sp"
-                android:layout_marginRight="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
                 android:layout_weight="5"
                 android:onClick="borrowDetails"
                 android:text="borrowed" />
@@ -67,8 +73,8 @@
             <Button
                 android:layout_width="0dp"
                 android:layout_height="100sp"
-                android:layout_marginRight="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
                 android:layout_weight="5"
                 android:onClick="partyDetails"
                 android:text="Party" />
@@ -76,27 +82,29 @@
             <Button
                 android:layout_width="0dp"
                 android:layout_height="100sp"
-                android:layout_marginRight="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
                 android:layout_weight="5"
                 android:onClick="getReports"
                 android:text="reports" />
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/companyName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
-            android:text="devoloped by Mohammed Rinshad P"
             android:gravity="end"
-            android:textStyle="italic"/>
+            android:text="devoloped by Mohammed Rinshad P"
+            android:textStyle="italic" />
     </LinearLayout>
 
 </RelativeLayout>
