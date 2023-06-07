@@ -14,4 +14,19 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Customize dialog window background -->
+        <item name="android:windowBackground">@layout/custom_dialog</item>
+        <!-- Customize dialog title style -->
+        <item name="android:windowTitleStyle">@style/CustomDialogTitle</item>
+        <!-- Add more customizations as needed -->
+    </style>
+
+    <style name="CustomDialogTitle" parent="TextAppearance.AppCompat.Title">
+        <!-- Customize title text appearance -->
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <!-- Add more customizations as needed -->
+    </style>
+
 </resources>

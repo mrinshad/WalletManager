@@ -62,8 +62,8 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_weight="5"
-                android:onClick="borrowDetails"
-                android:text="borrowed" />
+                android:onClick="lendDetails"
+                android:text="lend" />
         </LinearLayout>
 
         <LinearLayout

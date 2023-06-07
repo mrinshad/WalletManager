@@ -3,7 +3,9 @@ package com.example.walletmanager;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.walletmanager.Reports.ExpenseReport;
+import com.example.walletmanager.Reports.LendingReportActivity;
+import com.example.walletmanager.Reports.PartyMemberDetailsActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -28,7 +32,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-
 
     SQLiteDatabase mydb;
     RelativeLayout layout;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     String month, year, day;
     StringBuilder date1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,10 +67,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         getTodayDate();
-    }
-
-    private void getToast() {
-
     }
 
     private void getTodayDate() {
@@ -91,12 +91,12 @@ public class MainActivity extends AppCompatActivity {
             Cursor allrows = mydb.rawQuery("select sum(amount) from EXPENSE where date = '" + date1 + "'", null);
             if (allrows.moveToFirst()) {
                 do {
-                    Log.d("TAG", "getExpense: on date:"+date1+" amount: "+"₹"+allrows.getString(0));
+                    Log.d("TAG", "getExpense: on date:" + date1 + " amount: " + "₹" + allrows.getString(0));
                     String amount = "0.00";
                     if (allrows.getString(0) != null) {
                         amount = allrows.getString(0);
                     }
-                    mainExpenseDisplay.setText("₹"+amount);
+                    mainExpenseDisplay.setText("₹" + amount);
                 } while (allrows.moveToNext());
             }
         } catch (Exception e) {
@@ -107,9 +107,10 @@ public class MainActivity extends AppCompatActivity {
     public void addExpense(View v) {
         startActivity(new Intent(getApplicationContext(), ExpenseActivity.class));
     }
-    public void borrowDetails(View v){
-        Snackbar.make(layout,"Feature not available yet !!",Snackbar.LENGTH_SHORT).show();
-//        startActivity(new Intent(getApplicationContext(), Borrow.class));
+
+    public void lendDetails(View v) {
+//        Snackbar.make(layout,"Feature not available yet !!",Snackbar.LENGTH_SHORT).show();
+        startActivity(new Intent(getApplicationContext(), LendActivity.class));
     }
 
 //    @RequiresApi(api = Build.VERSION_CODES.O)
@@ -123,8 +124,41 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     public void getReports(View v) {
-        startActivity(new Intent(getApplicationContext(), ExpenseReport.class));
+//        startActivity(new Intent(getApplicationContext(), ExpenseReport.class));
 //        Snackbar.make(layout, "Feature not available yet !!", Snackbar.LENGTH_SHORT).show();
+        final String[] reportOptions = {"Expense Report", "Lending Report", "Party Member Details"};
+
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose a report");
+        builder.setItems(reportOptions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                launchReportActivity(which);
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void launchReportActivity(int optionIndex) {
+        switch (optionIndex) {
+            case 0:
+//                Intent expenseIntent = new Intent(MainActivity.this, ExpenseReport.class);
+//                startActivity(expenseIntent);
+                Snackbar.make(layout, "Coming soon!", Snackbar.LENGTH_SHORT).show();
+                break;
+            case 1:
+                Intent lendingIntent = new Intent(MainActivity.this, LendingReportActivity.class);
+                startActivity(lendingIntent);
+                break;
+            case 2:
+//                Intent partyIntent = new Intent(MainActivity.this, PartyMemberDetailsActivity.class);
+//                startActivity(partyIntent);
+                Snackbar.make(layout, "Coming soon!", Snackbar.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     public void partyDetails(View v) {
