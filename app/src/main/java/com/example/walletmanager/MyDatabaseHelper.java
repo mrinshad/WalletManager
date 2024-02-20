@@ -64,12 +64,24 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         double total= 0.0;
         if (cursor.moveToFirst()) {
             do {
-                String id = cursor.getString(cursor.getColumnIndex("id"));
-                String date = cursor.getString(cursor.getColumnIndex("date"));
-                String time = cursor.getString(cursor.getColumnIndex("time"));
-                String amount = cursor.getString(cursor.getColumnIndex("amount"));
-                String party_name = cursor.getString(cursor.getColumnIndex("party_name"));
-                String narration = cursor.getString(cursor.getColumnIndex("narration"));
+                int idColumnIndex = cursor.getColumnIndex("id");
+                String id = (idColumnIndex != -1) ? cursor.getString(idColumnIndex) : "";
+
+                int dateColumnIndex = cursor.getColumnIndex("date");
+                String date = (dateColumnIndex != -1) ? cursor.getString(dateColumnIndex) : "";
+
+                int timeColumnIndex = cursor.getColumnIndex("time");
+                String time = (timeColumnIndex != -1) ? cursor.getString(timeColumnIndex) : "";
+
+                int amountColumnIndex = cursor.getColumnIndex("amount");
+                String amount = (amountColumnIndex != -1) ? cursor.getString(amountColumnIndex) : "";
+
+                int partyNameColumnIndex = cursor.getColumnIndex("party_name");
+                String party_name = (partyNameColumnIndex != -1) ? cursor.getString(partyNameColumnIndex) : "";
+
+                int narrationColumnIndex = cursor.getColumnIndex("narration");
+                String narration = (narrationColumnIndex != -1) ? cursor.getString(narrationColumnIndex) : "";
+
                 total += Double.parseDouble(amount);
                 MyData data = new MyData(id, date, time, amount, party_name,narration,total);
 //                Log.d(TAG, " party: =" + party_name +" amount: =" +  amount);
