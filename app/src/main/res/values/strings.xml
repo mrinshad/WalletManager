@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Wallet manager</string>
+    <string name="app_name_with_version">Wallet Manager v1.0</string>
 </resources>
