@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
-    tools:context=".ExpenseActivity"
+    tools:context=".Activity.ExpenseActivity"
     tools:ignore="HardcodedText">
 
     <RelativeLayout
@@ -115,7 +115,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="0dp"
-        tools:context=".ExpenseActivity"
+        tools:context=".Activity.ExpenseActivity"
         tools:ignore="HardcodedText">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

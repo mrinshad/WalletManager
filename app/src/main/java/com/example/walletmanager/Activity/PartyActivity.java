@@ -1,8 +1,10 @@
-package com.example.walletmanager;
+package com.example.walletmanager.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.walletmanager.R;
 
 public class PartyActivity extends AppCompatActivity {
 

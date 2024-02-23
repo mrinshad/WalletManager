@@ -1,7 +1,9 @@
-package com.example.walletmanager;
+package com.example.walletmanager.Activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -10,13 +12,14 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.walletmanager.DBManager;
 import com.example.walletmanager.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -50,8 +53,9 @@ public class SplashScreen extends AppCompatActivity {
                     // For example, you can navigate to the next activity for online mode
                     progressBar.setVisibility(View.GONE);
                     progressText.setText("Internet connection available");
-
-                    startNextActivity();
+                    
+                    statusWindow();
+//                    startNextActivity();
                 } else {
                     // No internet connection, implement offline mode logic here
                     // For now, it starts the MainActivity, update it as per your requirements
@@ -88,5 +92,44 @@ public class SplashScreen extends AppCompatActivity {
             Log.d(TAG, "Connectivity Problem ");
         }
         return false;
+    }
+
+    private void statusWindow() {
+        FirebaseAuth mAuth;
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            startNextActivity();
+        }else{
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("Status Window");
+//            builder.setMessage("Do you want to go to online mode or stay in offline mode?");
+//
+//            builder.setPositiveButton("Go Online", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+//                    if (firebaseUser != null) {
+//                        startNextActivity();
+//                    } else {
+//                        Log.d(TAG, "Not logged in so lets goto login page");
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            finish();
+//                    }
+////                startNextActivity();
+//                }
+//            });
+//
+//            builder.setNegativeButton("Stay Offline", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    startNextActivity();
+//                }
+//            });
+//
+//            AlertDialog dialog = builder.create();
+//            dialog.show();
+        }
+
     }
 }

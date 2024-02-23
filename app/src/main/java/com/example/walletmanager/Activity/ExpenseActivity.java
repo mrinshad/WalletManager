@@ -1,7 +1,8 @@
-package com.example.walletmanager;
+package com.example.walletmanager.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -11,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,12 +20,18 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.walletmanager.DBManager;
+import com.example.walletmanager.R;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
@@ -33,10 +41,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
-public class LendActivity extends AppCompatActivity {
-
+public class ExpenseActivity extends AppCompatActivity {
     RelativeLayout layout;
     FloatingActionButton mAddFab, mAddAlarmFab, mAddPersonFab;
     TextView addAlarmActionText, addPersonActionText;
@@ -62,11 +70,12 @@ public class LendActivity extends AppCompatActivity {
     StringBuilder date;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lend);
+        setContentView(R.layout.activity_expense);
         getSupportActionBar().hide();
-        layout = findViewById(R.id.lendlayout);
+        layout = findViewById(R.id.expenselayout);
 
         // DATE PICKER
         try {
@@ -231,9 +240,9 @@ public class LendActivity extends AppCompatActivity {
             }
 
             mydb = openOrCreateDatabase(db.DBNAME, 0, null);
-            mydb.execSQL("INSERT INTO LEND (date,time,party_name,amount,narration) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amountString + "','" + narrationString + "')");
+            mydb.execSQL("INSERT INTO EXPENSE (date,time,party_name,amount,narration) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amountString + "','" + narrationString + "')");
             mydb.close();
-            Snackbar.make(layout, "Lend recorded", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(layout, "Expense recorded", Snackbar.LENGTH_SHORT).show();
             finish();
         } catch (Exception e) {
             e.printStackTrace();
@@ -270,7 +279,7 @@ public class LendActivity extends AppCompatActivity {
 
             showDialog(999);
             Toast.makeText(getApplicationContext(), "ca",
-                            Toast.LENGTH_SHORT)
+                    Toast.LENGTH_SHORT)
                     .show();
         } catch (Exception e) {
             e.printStackTrace();
