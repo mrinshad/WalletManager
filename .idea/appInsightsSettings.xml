@@ -10,13 +10,10 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.walletmanager" />
-                  <option name="mobileSdkAppId" value="1:140856403268:android:57ce79ea0a9625cdaca311" />
-                  <option name="projectId" value="wallet-manager-8deae" />
-                  <option name="projectNumber" value="140856403268" />
+                  <option name="mobileSdkAppId" value="1:326802978914:android:82cb277a751247d7f9b93b" />
+                  <option name="projectId" value="wallet-manager-2423" />
+                  <option name="projectNumber" value="326802978914" />
                 </ConnectionSetting>
-              </option>
-              <option name="failureTypes">
-                <list />
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
               <option name="timeIntervalDays" value="THIRTY_DAYS" />
