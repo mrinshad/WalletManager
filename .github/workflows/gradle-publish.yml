@@ -33,5 +33,14 @@ jobs:
     - name: Upload Release APK
       uses: actions/upload-artifact@v2
       with:
+        name: artifact
+        path: app/build/outputs/apk/debug/*.apk
+        if-no-files-found: warn
+      
+    - name: Releasing using Hub
+      uses: r0user/release-apk@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        APP_FOLDER: app
+      with:
         name: release-apk
-        path: app/build/outputs/apk/release/*.apk
