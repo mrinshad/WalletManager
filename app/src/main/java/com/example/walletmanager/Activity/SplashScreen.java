@@ -101,34 +101,8 @@ public class SplashScreen extends AppCompatActivity {
         if (currentUser != null){
             startNextActivity();
         }else{
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setTitle("Status Window");
-//            builder.setMessage("Do you want to go to online mode or stay in offline mode?");
-//
-//            builder.setPositiveButton("Go Online", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-//                    if (firebaseUser != null) {
-//                        startNextActivity();
-//                    } else {
-//                        Log.d(TAG, "Not logged in so lets goto login page");
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             finish();
-//                    }
-////                startNextActivity();
-//                }
-//            });
-//
-//            builder.setNegativeButton("Stay Offline", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    startNextActivity();
-//                }
-//            });
-//
-//            AlertDialog dialog = builder.create();
-//            dialog.show();
         }
 
     }

@@ -7,18 +7,77 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:326802978914:android:82cb277a751247d7f9b93b",
+        "mobilesdk_app_id": "1:326802978914:android:57b7d628502076cef9b93b",
         "android_client_info": {
           "package_name": "com.example.walletmanager"
         }
       },
       "oauth_client": [
         {
+          "client_id": "326802978914-1h1o44nq6m56nb2thtqfvjtn1o1b0nqp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.walletmanager",
+            "certificate_hash": "494862ce0f7402790ac5e2e2cb4f9f1748322cb1"
+          }
+        },
+        {
           "client_id": "326802978914-g1076uj1ruhn4u82mho9ipektt7o0qd8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
+        {
+          "current_key": "AIzaSyBOkYc-OyS3g85Sb_9-D7S7hgeZv4J5ako"
+        },
+        {
+          "current_key": "AIzaSyDJVkZpkQzp8jmXoxOFeCvNv6837kPKh0Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "326802978914-g1076uj1ruhn4u82mho9ipektt7o0qd8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326802978914:android:b5127c7137fe8f0cf9b93b",
+        "android_client_info": {
+          "package_name": "com.mrinshad.walletmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "326802978914-5mfg4ogpc6plfj89o4b0qt1rqicaiglh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mrinshad.walletmanager",
+            "certificate_hash": "040e323ce97bb10f263ce4a2f56450615f464a9f"
+          }
+        },
+        {
+          "client_id": "326802978914-cr7v7ml4hvqooeecsbhtveek6t19e4lc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mrinshad.walletmanager",
+            "certificate_hash": "494862ce0f7402790ac5e2e2cb4f9f1748322cb1"
+          }
+        },
+        {
+          "client_id": "326802978914-g1076uj1ruhn4u82mho9ipektt7o0qd8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOkYc-OyS3g85Sb_9-D7S7hgeZv4J5ako"
+        },
         {
           "current_key": "AIzaSyDJVkZpkQzp8jmXoxOFeCvNv6837kPKh0Y"
         }
