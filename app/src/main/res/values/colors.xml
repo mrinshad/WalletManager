@@ -13,4 +13,7 @@
     <color name="Warm_Blue">#444bf8</color>
     <color name="Mercury">#EAE5E5</color>
     <color name="Baltic_Sea">#252631</color>
+    <color name="green_online">#01CD0A</color>
+    <color name="red_offline">#CD0101</color>
+    <color name="grey_shade">#9B9DA3</color>
 </resources>

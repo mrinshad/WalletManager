@@ -3,21 +3,28 @@ package com.example.walletmanager.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.walletmanager.DBManager;
-import com.example.walletmanager.Party;
+import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.R;
 import com.example.walletmanager.Reports.LendingReportActivity;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -29,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout layout;
     TextView mainExpenseDisplay;
 
+    private FirebaseAuth mAuth;
     // DATE and TIME
-
     private Calendar calendar;
     DBManager db = new DBManager();
     Date c = new Date();
@@ -42,22 +49,69 @@ public class MainActivity extends AppCompatActivity {
     String dateFinal;
     String month, year, day;
     StringBuilder date1;
-
+    TextView connected_button;
+    View view_indicator;
+    public String CONNECTION_STATUS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAuth = FirebaseAuth.getInstance();
+        actionBar();
         layout = findViewById(R.id.layout);
         mainExpenseDisplay = findViewById(R.id.mainExpenseDisplay);
 
         getTodayDate();
     }
 
+    private final BroadcastReceiver connectivityReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (isNetworkAvailable()) {
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser == null){
+                    connected_button.setText("Disconnected");
+                    view_indicator.setBackgroundResource(R.drawable.round_red);
+                }else{
+                    connected_button.setText("Connected");
+                    view_indicator.setBackgroundResource(R.drawable.round_green);
+                }
+            } else {
+                connected_button.setText("Disconnected");
+                view_indicator.setBackgroundResource(R.drawable.round_red);
+            }
+        }
+    };
+    public void actionBar() {
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+
+        LayoutInflater mInflater = LayoutInflater.from(this);
+        View mCustomView = mInflater.inflate(R.layout.actionbar_main_menu, null);
+        connected_button = mCustomView.findViewById(R.id.button_text);
+        view_indicator = mCustomView.findViewById(R.id.online_indicator);
+        getSupportActionBar().setCustomView(mCustomView);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(connectivityReceiver);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
+    }
     @Override
     protected void onResume() {
         super.onResume();
+        registerReceiver(connectivityReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         getTodayDate();
     }
 
@@ -101,23 +155,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void lendDetails(View v) {
-//        Snackbar.make(layout,"Feature not available yet !!",Snackbar.LENGTH_SHORT).show();
         startActivity(new Intent(getApplicationContext(), LendActivity.class));
     }
 
-//    @RequiresApi(api = Build.VERSION_CODES.O)
-//    private void addAmount(String amount) {
-//
-//        String party = "";
-//        mydb = openOrCreateDatabase(db.DBNAME, 0, null);
-//        mydb.execSQL("INSERT INTO EXPENSE (date,time,party_name,amount) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amount + "')");
-//        mydb.close();
-//        Snackbar.make(layout, "Expense added !!", Snackbar.LENGTH_SHORT).show();
-//    }
 
     public void getReports(View v) {
-//        startActivity(new Intent(getApplicationContext(), ExpenseReport.class));
-//        Snackbar.make(layout, "Feature not available yet !!", Snackbar.LENGTH_SHORT).show();
         final String[] reportOptions = {"Expense Report", "Lending Report", "Party Member Details"};
 
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
@@ -155,6 +197,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void partyDetails(View v) {
         startActivity(new Intent(getApplicationContext(), Party.class));
-//        Snackbar.make(layout,"Feature not available yet !!",Snackbar.LENGTH_SHORT).show();
+    }
+
+    public void gotoSettings(View v){
+        startActivity(new Intent(getApplicationContext(), Settings.class));
     }
 }

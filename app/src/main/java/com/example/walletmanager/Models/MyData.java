@@ -1,4 +1,4 @@
-package com.example.walletmanager;
+package com.example.walletmanager.Models;
 
 public class MyData {
     private String id;

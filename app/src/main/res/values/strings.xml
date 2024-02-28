@@ -2,4 +2,10 @@
     <string name="app_name">Wallet manager</string>
     <string name="app_name_with_version">Wallet Manager v1.0</string>
     <string name="default_web_client_id">326802978914-g1076uj1ruhn4u82mho9ipektt7o0qd8.apps.googleusercontent.com</string>
+    <string name="logout">LOGOUT</string>
+    <string name="about">ABOUT</string>
+    <string name="logout_alert">Do you want to logout?</string>
+    <string name="decline">DECLINE</string>
+    <string name="accept">ACCEPT</string>
+
 </resources>
