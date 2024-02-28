@@ -10,7 +10,7 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.walletmanager" />
-                  <option name="mobileSdkAppId" value="1:326802978914:android:82cb277a751247d7f9b93b" />
+                  <option name="mobileSdkAppId" value="1:326802978914:android:57b7d628502076cef9b93b" />
                   <option name="projectId" value="wallet-manager-2423" />
                   <option name="projectNumber" value="326802978914" />
                 </ConnectionSetting>

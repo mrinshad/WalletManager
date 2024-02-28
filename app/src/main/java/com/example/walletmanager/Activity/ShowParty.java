@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.example.walletmanager.R;
 
-public class PartyActivity extends AppCompatActivity {
+public class ShowParty extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -88,6 +88,19 @@
                 android:onClick="getReports"
                 android:text="reports" />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="100sp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_weight="5"
+                android:onClick="gotoSettings"
+                android:text="Settings" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

@@ -1,4 +1,4 @@
-package com.example.walletmanager;
+package com.example.walletmanager.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.example.walletmanager.MyData;
+import com.example.walletmanager.Models.MyData;
+import com.example.walletmanager.R;
 
 import java.util.List;
 

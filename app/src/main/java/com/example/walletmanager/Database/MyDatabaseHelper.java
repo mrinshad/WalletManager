@@ -1,4 +1,4 @@
-package com.example.walletmanager;
+package com.example.walletmanager.Database;
 
 import static android.content.ContentValues.TAG;
 
@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.example.walletmanager.Models.MyData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,7 +52,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Method to retrieve data within the specified date range
-    public List<MyData> getDataWithinDateRange(String partyName,String fromDate, String toDate) {
+    public List<MyData> getDataWithinDateRange(String partyName, String fromDate, String toDate) {
         List<MyData> dataList = new ArrayList<>();
 
         Log.d(TAG, "viewData: =" + fromDate + toDate);

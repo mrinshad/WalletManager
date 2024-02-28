@@ -1,4 +1,4 @@
-package com.example.walletmanager;
+package com.example.walletmanager.Activity;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,10 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
+import com.example.walletmanager.Database.DBManager;
+import com.example.walletmanager.R;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputLayout;
 
 public class Party extends AppCompatActivity {
 

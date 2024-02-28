@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.example.walletmanager.DBManager;
+import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.Models.ExpenseReportModel;
 import com.example.walletmanager.R;
 

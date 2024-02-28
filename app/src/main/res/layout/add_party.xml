@@ -22,7 +22,7 @@
         android:layout_marginTop="10dp"
         android:inputType="numberDecimal"
         android:layout_below="@+id/add_party_partyName"
-        android:hint="Initial amount..." />
+        android:hint="Amount" />
 
     <Button
         android:id="@+id/add_party_addButton"

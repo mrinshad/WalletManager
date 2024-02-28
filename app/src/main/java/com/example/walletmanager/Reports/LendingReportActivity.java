@@ -1,19 +1,15 @@
 package com.example.walletmanager.Reports;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,17 +21,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.walletmanager.DBAdapter;
-import com.example.walletmanager.DBManager;
-import com.example.walletmanager.MyData;
-import com.example.walletmanager.MyDatabaseHelper;
+import com.example.walletmanager.Adapters.DBAdapter;
+import com.example.walletmanager.Database.DBManager;
+import com.example.walletmanager.Models.MyData;
+import com.example.walletmanager.Database.MyDatabaseHelper;
 import com.example.walletmanager.R;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 

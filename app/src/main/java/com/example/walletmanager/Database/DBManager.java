@@ -1,4 +1,4 @@
-package com.example.walletmanager;
+package com.example.walletmanager.Database;
 
 
 import static android.content.ContentValues.TAG;
