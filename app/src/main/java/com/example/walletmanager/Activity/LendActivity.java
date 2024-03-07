@@ -1,5 +1,7 @@
 package com.example.walletmanager.Activity;
 
+import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -11,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -58,7 +61,7 @@ public class LendActivity extends AppCompatActivity {
     MaterialDatePicker.Builder materialDateBuilder;
     private Calendar calendar;
     Date c = new Date();
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
     SimpleDateFormat time = new SimpleDateFormat("hh:mm a");
     String currTime = time.format(c);
     StringBuilder date;
@@ -148,6 +151,7 @@ public class LendActivity extends AppCompatActivity {
             date = new StringBuilder().append(year).append("-")
                     .append(month).append("-").append(day);
             dateFinal = df.format(df.parse(date.toString()));
+            Log.d(TAG, "showDate: " + dateFinal);
             dateView.setText(date);
         } catch (ParseException e) {
             e.printStackTrace();

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -41,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
+    private static GoogleSignInClient mGoogleSignInClient;
     TextView progressText;
     GoogleSignInOptions gso;
     private SignInClient oneTapClient;
@@ -53,61 +54,25 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         progressText = findViewById(R.id.progressText);
-        // Configure Google Sign In
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-//        BeginSignInRequest signInRequest = BeginSignInRequest.builder()
-//                .setGoogleIdTokenRequestOptions(
-//                        BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-//                                .setSupported(true)
-//                                // Your server's client ID, not your Android client ID.
-//                                .setServerClientId(getString(R.string.default_web_client_id))
-//                                // Only show accounts previously used to sign in.
-//                                .setFilterByAuthorizedAccounts(true)
-//                                .build())
-//                .setAutoSelectEnabled(false)
-//                .build();
 
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
 
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        Intent signInIntent = getGoogleSignInClient(this).getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
-
-//        oneTapClient.beginSignIn(signInRequest)
-//                .addOnSuccessListener(this, new OnSuccessListener<BeginSignInResult>() {
-//                    @Override
-//                    public void onSuccess(BeginSignInResult result) {
-//                        try {
-//                            startIntentSenderForResult(
-//                                    result.getPendingIntent().getIntentSender(), 2,
-//                                    null, 0, 0, 0);
-//                        } catch (IntentSender.SendIntentException e) {
-//                            Log.e(TAG, "Couldn't start One Tap UI: " + e.getLocalizedMessage());
-//                        }
-//                    }
-//                })
-//                .addOnFailureListener(this, new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        // No saved credentials found. Launch the One Tap sign-up flow, or
-//                        // do nothing and continue presenting the signed-out UI.
-//                        Log.d(TAG, e.getLocalizedMessage());
-//                    }
-//                });
-
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        updateUI(currentUser);
-//    }
+    public static GoogleSignInClient getGoogleSignInClient(Context context) {
+        if (mGoogleSignInClient == null) {
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(context.getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+
+            mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
+        }
+
+        return mGoogleSignInClient;
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -167,15 +132,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser user) {
-//        if (user != null)
-//            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-//        else
-//            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-    }
 
-//    @Override
-//    public void onClick(View v) {
-//        if (v.getId() == R.id.sign_in_button)
-//            signIn();
-//    }
+    }
 }

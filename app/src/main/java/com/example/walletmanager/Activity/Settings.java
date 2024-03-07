@@ -2,6 +2,7 @@ package com.example.walletmanager.Activity;
 
 import static com.google.android.material.internal.ContextUtils.getActivity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,6 +26,9 @@ import android.widget.TextView;
 import com.example.walletmanager.Adapters.SettingsListCustomAdapter;
 import com.example.walletmanager.Models.SettingsListModel;
 import com.example.walletmanager.R;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -119,7 +123,27 @@ public class Settings extends AppCompatActivity {
         builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                FirebaseAuth.getInstance().signOut();
+                GoogleSignInClient mGoogleSignInClient = LoginActivity.getGoogleSignInClient(getApplicationContext());
+                mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            mGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        gotoLoginPage();
+                                    } else {
+                                        // Handle failure to revoke access
+                                    }
+                                }
+                            });
+                        } else {
+                            // Handle failure to sign out
+                        }
+                    }
+                });
+
                 dialog.dismiss();
                 gotoLoginPage();
             }
