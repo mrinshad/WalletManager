@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.walletmanager.Activity.Party;
 import com.example.walletmanager.Models.MyData;
+import com.example.walletmanager.Models.PartyListModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,41 +29,24 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     String COLUMN_DESCRIPTION = "description";
     String COLUMN_DATE = "date";
 
+    SQLiteDatabase db = getReadableDatabase();
+
     // Constructor
     public MyDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create the database table
-//        String createTableQuery = "CREATE TABLE " + TABLE_NAME + "(" +
-//                COLUMN_TITLE + " TEXT," +
-//                COLUMN_DESCRIPTION + " TEXT," +
-//                COLUMN_DATE + " TEXT" +
-//                ")";
-//        db.execSQL(createTableQuery);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop the existing table and recreate it
-//        String dropTableQuery = "DROP TABLE IF EXISTS " + TABLE_NAME;
-//        db.execSQL(dropTableQuery);
-//        onCreate(db);
     }
-
-    // Method to retrieve data within the specified date range
     public List<MyData> getDataWithinDateRange(String partyName, String fromDate, String toDate) {
         List<MyData> dataList = new ArrayList<>();
 
         Log.d(TAG, "viewData: =" + fromDate + toDate);
-        // Convert the from and to dates to a string format suitable for querying
-//        String fromDateString = convertDateToString(fromDate);
-//        String toDateString = convertDateToString(toDate);
-
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT * FROM Lend WHERE date BETWEEN '"+fromDate+"' AND '"+toDate+"' And party_name = '"+partyName+"'";
+        String query = "SELECT * FROM LEND WHERE date BETWEEN '"+fromDate+"' AND '"+toDate+"' And party_name = '"+partyName+"'";
         Cursor cursor = db.rawQuery(query, null);
         double total= 0.0;
         if (cursor.moveToFirst()) {
@@ -101,5 +86,24 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private String convertDateToString(Calendar calendar) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return sdf.format(calendar.getTime());
+    }
+
+    public List<PartyListModel> getAllParties() {
+        List<PartyListModel> partyList = new ArrayList<>();
+        Cursor cursor = db.query("PARTY", null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                long id = cursor.getLong(cursor.getColumnIndex("id"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                Log.d(TAG, "getAllParties: " + name);
+                double balance = cursor.getDouble(cursor.getColumnIndex("balance"));
+                PartyListModel party = new PartyListModel(id, name, balance);
+                partyList.add(party);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return partyList;
     }
 }

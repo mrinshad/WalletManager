@@ -40,7 +40,8 @@
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="20sp"
+            android:layout_gravity="center_vertical"
             android:layout_centerInParent="true"
             android:visibility="visible" />
 
@@ -49,9 +50,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/progressBar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="Checking internet..."
+            android:layout_gravity="center_vertical"
+            android:text="Checking internet connection..."
             android:visibility="visible" />
     </LinearLayout>
 </LinearLayout>

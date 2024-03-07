@@ -50,13 +50,15 @@ public class SplashScreen extends AppCompatActivity {
                     // Internet is available, implement online mode logic here
                     // For example, you can navigate to the next activity for online mode
                     progressBar.setVisibility(View.GONE);
-                    progressText.setText("Internet connection available");
+                    progressText.setText("Connected");
                     
                     statusWindow();
 //                    startNextActivity();
                 } else {
                     // No internet connection, implement offline mode logic here
                     // For now, it starts the MainActivity, update it as per your requirements
+                    progressBar.setVisibility(View.GONE);
+                    progressText.setText("No Connection");
                     startNextActivity();
                 }
             }
