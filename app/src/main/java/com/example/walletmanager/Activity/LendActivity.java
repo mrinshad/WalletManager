@@ -1,7 +1,5 @@
 package com.example.walletmanager.Activity;
 
-import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -13,7 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,8 +25,6 @@ import android.widget.Toast;
 
 import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.R;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -43,25 +38,20 @@ import java.util.List;
 public class LendActivity extends AppCompatActivity {
 
     RelativeLayout layout;
-    FloatingActionButton mAddFab, mAddAlarmFab, mAddPersonFab;
-    TextView addAlarmActionText, addPersonActionText;
-    Boolean isAllFabsVisible;
     Button partyButton;
 
     ArrayAdapter<String> adapter2;
-    String[] arraylist;
     SQLiteDatabase mydb;
     DBManager db = new DBManager();
 
     EditText textPartySearch;
-    TextView partyName, dateView;
+    TextView  dateView;
     TextInputLayout amountInputLayout, narrationInputLayout;
     String amountString, narrationString, dateFinal;
     String day, month, year;
-    MaterialDatePicker.Builder materialDateBuilder;
     private Calendar calendar;
     Date c = new Date();
-    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat time = new SimpleDateFormat("hh:mm a");
     String currTime = time.format(c);
     StringBuilder date;
@@ -86,64 +76,10 @@ public class LendActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Activity componnets
-        partyButton = findViewById(R.id.selectPartyButton);
 
-        // FAB button
-        mAddFab = findViewById(R.id.add_fab);
-        mAddAlarmFab = findViewById(R.id.add_alarm_fab);
-        mAddPersonFab = findViewById(R.id.add_person_fab);
-        addAlarmActionText = findViewById(R.id.add_alarm_action_text);
-        addPersonActionText = findViewById(R.id.add_person_action_text);
+        partyButton = findViewById(R.id.selectPartyButton);
         amountInputLayout = findViewById(R.id.amountTextView);
         narrationInputLayout = findViewById(R.id.narrationTextView);
-
-        mAddAlarmFab.setVisibility(View.GONE);
-        mAddPersonFab.setVisibility(View.GONE);
-        addAlarmActionText.setVisibility(View.GONE);
-        addPersonActionText.setVisibility(View.GONE);
-
-        isAllFabsVisible = false;
-
-        mAddFab.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (!isAllFabsVisible) {
-
-                            mAddAlarmFab.show();
-                            mAddPersonFab.show();
-                            addAlarmActionText.setVisibility(View.VISIBLE);
-                            addPersonActionText.setVisibility(View.VISIBLE);
-
-                            isAllFabsVisible = true;
-                        } else {
-
-                            mAddAlarmFab.hide();
-                            mAddPersonFab.hide();
-                            addAlarmActionText.setVisibility(View.GONE);
-                            addPersonActionText.setVisibility(View.GONE);
-
-                            isAllFabsVisible = false;
-                        }
-                    }
-                });
-
-        mAddPersonFab.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getApplicationContext(), "Person Added", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        mAddAlarmFab.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getApplicationContext(), "Alarm Added", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     private void showDate(String year, String month, String day) {
@@ -151,7 +87,6 @@ public class LendActivity extends AppCompatActivity {
             date = new StringBuilder().append(year).append("-")
                     .append(month).append("-").append(day);
             dateFinal = df.format(df.parse(date.toString()));
-            Log.d(TAG, "showDate: " + dateFinal);
             dateView.setText(date);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -275,9 +210,6 @@ public class LendActivity extends AppCompatActivity {
         try {
 
             showDialog(999);
-            Toast.makeText(getApplicationContext(), "ca",
-                            Toast.LENGTH_SHORT)
-                    .show();
         } catch (Exception e) {
             e.printStackTrace();
         }

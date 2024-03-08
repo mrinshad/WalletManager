@@ -137,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
             Cursor allrows = mydb.rawQuery("select sum(amount) from EXPENSE where date = '" + date1 + "'", null);
             if (allrows.moveToFirst()) {
                 do {
-                    Log.d("TAG", "getExpense: on date:" + date1 + " amount: " + "₹" + allrows.getString(0));
                     String amount = "0.00";
                     if (allrows.getString(0) != null) {
                         amount = allrows.getString(0);
@@ -148,6 +147,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void addBorrow(View v) {
+        startActivity(new Intent(getApplicationContext(), BorrowActivity.class));
     }
 
     public void addExpense(View v) {

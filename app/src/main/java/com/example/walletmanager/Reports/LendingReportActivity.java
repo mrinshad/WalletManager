@@ -220,7 +220,5 @@ public class LendingReportActivity extends AppCompatActivity {
         DBAdapter adapter = new DBAdapter(this, dataList);
         listView.setAdapter(adapter);
         totalAmount.setText(String.valueOf("₹" + total));
-
-//        Log.d(TAG, "viewData: " + partyName);
     }
 }

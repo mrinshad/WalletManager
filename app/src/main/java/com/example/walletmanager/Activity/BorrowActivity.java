@@ -25,8 +25,6 @@ import android.widget.Toast;
 
 import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.R;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -37,20 +35,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ExpenseActivity extends AppCompatActivity {
-    RelativeLayout layout;
-    Button partyButton;
+public class BorrowActivity extends AppCompatActivity {
+
+    RelativeLayout relativeLayout,toolbar;
+    Button partyButton,saveButton;
 
     ArrayAdapter<String> adapter2;
     SQLiteDatabase mydb;
     DBManager db = new DBManager();
 
     EditText textPartySearch;
-    TextView  dateView;
+    TextView dateView;
     TextInputLayout amountInputLayout, narrationInputLayout;
     String amountString, narrationString, dateFinal;
     String day, month, year;
-    private Calendar calendar;
+    Calendar calendar;
     Date c = new Date();
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat time = new SimpleDateFormat("hh:mm a");
@@ -58,13 +57,17 @@ public class ExpenseActivity extends AppCompatActivity {
     StringBuilder date;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_expense);
+        setContentView(R.layout.activity_borrow);
         getSupportActionBar().hide();
-        layout = findViewById(R.id.expenselayout);
 
+        relativeLayout = findViewById(R.id.borrowlayout);
+        toolbar = findViewById(R.id.toolbar);
+        partyButton = findViewById(R.id.selectPartyButton);
+        saveButton = findViewById(R.id.save_btn);
+        amountInputLayout = findViewById(R.id.amountTextView);
+        narrationInputLayout = findViewById(R.id.narrationTextView);
         // DATE PICKER
         try {
             calendar = Calendar.getInstance();
@@ -76,20 +79,6 @@ public class ExpenseActivity extends AppCompatActivity {
             day = db.dateOrTimeConverter(newDay);
             showDate(year, month, day);
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-        partyButton = findViewById(R.id.selectPartyButton);
-        amountInputLayout = findViewById(R.id.amountTextView);
-        narrationInputLayout = findViewById(R.id.narrationTextView);
-    }
-
-    private void showDate(String year, String month, String day) {
-        try {
-            date = new StringBuilder().append(year).append("-")
-                    .append(month).append("-").append(day);
-            dateFinal = df.format(df.parse(date.toString()));
-            dateView.setText(date);
-        } catch (ParseException e) {
             e.printStackTrace();
         }
     }
@@ -138,6 +127,17 @@ public class ExpenseActivity extends AppCompatActivity {
 
     }
 
+    private void showDate(String year, String month, String day) {
+        try {
+            date = new StringBuilder().append(year).append("-")
+                    .append(month).append("-").append(day);
+            dateFinal = df.format(df.parse(date.toString()));
+            dateView.setText(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String[] getPartyList() {
         List<String> partyList = new ArrayList<String>();
         try {
@@ -164,7 +164,7 @@ public class ExpenseActivity extends AppCompatActivity {
             String date = dateFinal;
             String party = partyButton.getText().toString();
             if (party.equals("PARTY")) {
-                Snackbar.make(layout, "Please select a party", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(relativeLayout, "Please select a party", Snackbar.LENGTH_SHORT).show();
                 return;
             }
             if (amountString.isEmpty()) {
@@ -173,15 +173,14 @@ public class ExpenseActivity extends AppCompatActivity {
             }
 
             mydb = openOrCreateDatabase(db.DBNAME, 0, null);
-            mydb.execSQL("INSERT INTO EXPENSE (date,time,party_name,amount,narration) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amountString + "','" + narrationString + "')");
+            mydb.execSQL("INSERT INTO BORROW (date,time,party_name,amount,narration) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amountString + "','" + narrationString + "')");
             mydb.close();
-            Snackbar.make(layout, "Expense recorded", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(relativeLayout, "Borrow recorded", Snackbar.LENGTH_SHORT).show();
             finish();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     @Override
     protected Dialog onCreateDialog(int id) {

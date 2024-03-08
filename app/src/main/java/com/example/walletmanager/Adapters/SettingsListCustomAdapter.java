@@ -74,7 +74,7 @@ public class SettingsListCustomAdapter  extends ArrayAdapter<SettingsListModel> 
         }
 
         try {
-            Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+            Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.down_from_top : R.anim.up_from_bottom);
 
             result.startAnimation(animation);
             lastPosition = position;

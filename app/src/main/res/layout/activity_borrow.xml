@@ -2,11 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/expenselayout"
+    android:id="@+id/borrowlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/ExpenseActivityTheme"
-    tools:context=".Activity.ExpenseActivity"
+    tools:context=".Activity.BorrowActivity"
+    android:theme="@style/BorrowActivityTheme"
     tools:ignore="HardcodedText">
 
 
@@ -16,13 +16,13 @@
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="0dp"
-        android:background="@drawable/expense_toolbar"
+        android:background="@drawable/borrow_toolbar"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Expense"
+            android:text="Borrowed Money"
             android:gravity="center_vertical"
             android:textColor="@color/white"
             android:layout_marginStart="15dp"/>

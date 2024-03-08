@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="TextLabel" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:textColorHint">#4285F4</item>
@@ -14,6 +14,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <!-- Customize dialog window background -->
         <item name="android:windowBackground">@layout/custom_dialog</item>
@@ -41,5 +42,47 @@
         <item name="buttonBarNegativeButtonStyle">@style/Button.FullWidth</item>
         <item name="buttonBarNeutralButtonStyle">@style/Button.FullWidth</item>
     </style>
+
+    <style name="classicLook" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">?attr/colorPrimaryVariant</item>
+        <item name="colorSecondary">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <style name="BorrowActivityTheme" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/color_for_borrow</item>
+        <item name="colorSecondary">@color/color_for_borrow</item>
+        <item name="android:statusBarColor">@color/color_for_borrow</item>
+    </style>
+
+    <style name="ExpenseActivityTheme" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/color_for_expense</item>
+        <item name="colorSecondary">@color/color_for_expense</item>
+        <item name="android:statusBarColor">@color/color_for_expense</item>
+    </style>
+
+    <style name="LendActivityTheme" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/color_for_lend</item>
+        <item name="colorSecondary">@color/color_for_lend</item>
+        <item name="android:statusBarColor">@color/color_for_lend</item>
+    </style>
+
+    <style name="PartyActivityTheme" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/color_for_party</item>
+        <item name="colorSecondary">@color/color_for_party</item>
+        <item name="android:statusBarColor">@color/color_for_party</item>
+    </style>
+
+    <style name="reportsActivityTheme" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/color_for_reports</item>
+        <item name="colorSecondary">@color/color_for_reports</item>
+        <item name="android:statusBarColor">@color/color_for_reports</item>
+    </style>
+    <style name="settingsActivityTheme" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/color_for_settings</item>
+        <item name="colorSecondary">@color/color_for_settings</item>
+        <item name="android:statusBarColor">@color/color_for_settings</item>
+    </style>
+
+
 
 </resources>

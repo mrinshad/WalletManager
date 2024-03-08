@@ -36,6 +36,7 @@ public class Party extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_party);
         layout = findViewById(R.id.partyLayout);
+        getSupportActionBar().hide();
 
         listView = (ListView) findViewById(R.id.listview_party);
         MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(this);
