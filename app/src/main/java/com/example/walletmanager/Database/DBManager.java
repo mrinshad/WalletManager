@@ -14,8 +14,9 @@ public class DBManager {
     String COLUMN_DESCRIPTION = "description";
     String COLUMN_DATE = "date";
     public String TABLE_EXPENSE = "CREATE TABLE IF NOT EXISTS EXPENSE(id INTEGER PRIMARY KEY AUTOINCREMENT,date DATETIME,time TEXT,party_name TEXT,amount double,narration TEXT,synced INTEGER DEFAULT 0)";
-    public String TABLE_PARTY = "CREATE TABLE IF NOT EXISTS PARTY(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,balance double)";
-    public String TABLE_LEND = "CREATE TABLE IF NOT EXISTS LEND(id INTEGER PRIMARY KEY AUTOINCREMENT,date DATETIME,time TEXT,party_name TEXT,amount double,narration TEXT)";
+    public String TABLE_LEND = "CREATE TABLE IF NOT EXISTS LEND(id INTEGER PRIMARY KEY AUTOINCREMENT,date DATETIME,time TEXT,party_name TEXT,amount double,narration TEXT,synced INTEGER DEFAULT 0)";
+    public String TABLE_BORROW = "CREATE TABLE IF NOT EXISTS BORROW(id INTEGER PRIMARY KEY AUTOINCREMENT,date DATETIME,time TEXT,party_name TEXT,amount double,narration TEXT,synced INTEGER DEFAULT 0)";
+    public String TABLE_PARTY = "CREATE TABLE IF NOT EXISTS PARTY(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,balance double,synced INTEGER DEFAULT 0)";
 
     public String dateOrTimeConverter(int num) {
         String newNum = "";
@@ -24,7 +25,6 @@ public class DBManager {
         } else {
             newNum = String.valueOf(num);
         }
-        Log.d(TAG, "dateOrTimeConverter: "+newNum);
         return newNum;
     }
 }

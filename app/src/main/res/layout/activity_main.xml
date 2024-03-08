@@ -35,7 +35,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/companyName"
+        android:layout_alignParentBottom="true"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="50dp"
@@ -45,14 +45,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="10">
+            android:weightSum="9">
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="100sp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_weight="3"
+                android:backgroundTint="@color/color_for_borrow"
+                android:onClick="addBorrow"
+                android:text="Borrow" />
+
 
             <Button
                 android:layout_width="0dp"
                 android:layout_height="100sp"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
-                android:layout_weight="5"
+                android:layout_weight="3"
+                android:backgroundTint="@color/color_for_expense"
                 android:onClick="addExpense"
                 android:text="EXPENSE" />
 
@@ -61,7 +72,8 @@
                 android:layout_height="100sp"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
-                android:layout_weight="5"
+                android:layout_weight="3"
+                android:backgroundTint="@color/color_for_lend"
                 android:onClick="lendDetails"
                 android:text="lend" />
         </LinearLayout>
@@ -76,6 +88,7 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_weight="5"
+                android:backgroundTint="@color/color_for_party"
                 android:onClick="partyDetails"
                 android:text="Party" />
 
@@ -84,6 +97,7 @@
                 android:layout_height="100sp"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
+                android:backgroundTint="@color/color_for_reports"
                 android:layout_weight="5"
                 android:onClick="getReports"
                 android:text="reports" />
@@ -98,26 +112,9 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_weight="5"
+                android:backgroundTint="@color/color_for_settings"
                 android:onClick="gotoSettings"
                 android:text="Settings" />
         </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/companyName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp"
-            android:gravity="end"
-            android:text="devoloped by Mohammed Rinshad P"
-            android:textStyle="italic" />
-    </LinearLayout>
-
 </RelativeLayout>

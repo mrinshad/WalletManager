@@ -1,6 +1,6 @@
 package com.example.walletmanager.Models;
 
-public class ExpenseModel {
+public class ELBModel {
     private String id;
     private String date;
     private String time;
@@ -9,10 +9,10 @@ public class ExpenseModel {
     private String narration;
 
     // Required empty constructor for Firestore
-    public ExpenseModel() {
+    public ELBModel() {
     }
 
-    public ExpenseModel(String id, String date, String time, String partyName, double amount, String narration) {
+    public ELBModel(String id, String date, String time, String partyName, double amount, String narration) {
         this.id = id;
         this.date = date;
         this.time = time;

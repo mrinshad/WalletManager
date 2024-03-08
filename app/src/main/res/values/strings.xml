@@ -7,5 +7,7 @@
     <string name="logout_alert">Do you want to logout?</string>
     <string name="decline">DECLINE</string>
     <string name="accept">ACCEPT</string>
+    <string name="clear_all_message">Do you want to clear all the data?</string>
+    <string name="clear_all_title">Clear All Data</string>
 
 </resources>

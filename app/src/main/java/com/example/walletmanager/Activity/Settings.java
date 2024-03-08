@@ -1,7 +1,5 @@
 package com.example.walletmanager.Activity;
 
-import static com.google.android.material.internal.ContextUtils.getActivity;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,27 +18,18 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.walletmanager.Adapters.SettingsListCustomAdapter;
 import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.Database.MyDatabaseHelper;
-import com.example.walletmanager.Models.ExpenseModel;
 import com.example.walletmanager.Models.SettingsListModel;
 import com.example.walletmanager.R;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -103,18 +92,23 @@ public class Settings extends AppCompatActivity {
 
     private void dbUpdates() {
         try {
-            String ADD_SYNCED_COLUMN = "ALTER TABLE expense ADD COLUMN synced INTEGER DEFAULT 0";
-            mydb.execSQL(ADD_SYNCED_COLUMN);
-            mydb.close();
+//            String alterPartyTable = "ALTER TABLE party ADD COLUMN synced INTEGER DEFAULT 0";
+//
+//            mydb.execSQL(alterPartyTable);
+//            mydb.close();
         } catch (SQLException e) {
             Log.e(TAG, "dbUpdates: ", e);
         }
     }
 
     private void syncDataToServer() {
-        try{
-            myDatabaseHelper.syncDataToFirebase();
-        }catch (Exception e){
+        try {
+            myDatabaseHelper.syncDataToFirebase("Expense");
+            myDatabaseHelper.syncDataToFirebase("Lend");
+            myDatabaseHelper.syncDataToFirebase("Borrow");
+            myDatabaseHelper.insertPartyToFirebase();
+
+        } catch (Exception e) {
             Log.e(TAG, "syncDataToServer: ", e);
         }
     }
@@ -122,7 +116,6 @@ public class Settings extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: " + "Working...");
         if (isNetworkAvailable()) {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser == null) {
@@ -161,32 +154,10 @@ public class Settings extends AppCompatActivity {
         builder.setMessage(R.string.logout_alert);
 
         // Set positive button (OK button) and its action
-        builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                GoogleSignInClient mGoogleSignInClient = LoginActivity.getGoogleSignInClient(getApplicationContext());
-                mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            mGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        gotoLoginPage();
-                                    } else {
-                                        // Handle failure to revoke access
-                                    }
-                                }
-                            });
-                        } else {
-                            // Handle failure to sign out
-                        }
-                    }
-                });
-
-                dialog.dismiss();
-                gotoLoginPage();
+                clearAllDataFromDatabase(context,dialog);
             }
         });
 
@@ -200,6 +171,61 @@ public class Settings extends AppCompatActivity {
         // Create and show the alert dialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void clearAllDataFromDatabase(Context context,DialogInterface dialog) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        // Set the title and message for the dialog
+        builder.setTitle(R.string.clear_all_title);
+        builder.setMessage(R.string.clear_all_message);
+
+        builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                myDatabaseHelper.clearAllData(mydb);
+                logoutFirebase(dialog);
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                logoutFirebase(dialog);
+                dialog.dismiss();
+            }
+        });
+
+        // Create and show the alert dialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    public void logoutFirebase(DialogInterface dialog) {
+        GoogleSignInClient mGoogleSignInClient = LoginActivity.getGoogleSignInClient(getApplicationContext());
+        mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    mGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                gotoLoginPage();
+                            } else {
+                                // Handle failure to revoke access
+                            }
+                        }
+                    });
+                } else {
+                    // Handle failure to sign out
+                }
+            }
+        });
+
+        dialog.dismiss();
+        gotoLoginPage();
     }
 
     private void gotoLoginPage() {

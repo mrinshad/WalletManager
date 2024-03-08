@@ -16,4 +16,15 @@
     <color name="green_online">#01CD0A</color>
     <color name="red_offline">#CD0101</color>
     <color name="grey_shade">#9B9DA3</color>
+    <color name="b_sapphire_blue">#56BEDB</color>
+    <color name="b_amber">#FFD999</color>
+    <color name="b_Amethyst">#D89BEF</color>
+    <color name="b_grey">#C0C0C0</color>
+    <color name="color_for_borrow">#93073E</color>
+    <color name="color_for_expense">#FFC400</color>
+    <color name="color_for_lend">#C90035</color>
+    <color name="color_for_party">#66BB6A</color>
+    <color name="color_for_reports">#FF5627</color>
+    <color name="color_for_settings">#5B1647</color>
+
 </resources>
