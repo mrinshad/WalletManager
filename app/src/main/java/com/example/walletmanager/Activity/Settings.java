@@ -11,6 +11,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -24,6 +26,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.walletmanager.Adapters.SettingsListCustomAdapter;
+import com.example.walletmanager.Database.DBManager;
+import com.example.walletmanager.Database.MyDatabaseHelper;
+import com.example.walletmanager.Models.ExpenseModel;
 import com.example.walletmanager.Models.SettingsListModel;
 import com.example.walletmanager.R;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -33,16 +38,22 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 public class Settings extends AppCompatActivity {
 
-    private static final String TAG = "Logout Page";
+    private static final String TAG = "Settings";
     private FirebaseAuth mAuth;
     ArrayList<SettingsListModel> dataModels;
     private static SettingsListCustomAdapter adapter;
     ListView listView;
+    SQLiteDatabase mydb;
+    DBManager db = new DBManager();
+    MyDatabaseHelper myDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +65,14 @@ public class Settings extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         mAuth = FirebaseAuth.getInstance();
-
+        mydb = openOrCreateDatabase(db.DBNAME, 0, null);
+        myDatabaseHelper = new MyDatabaseHelper(this);
 //        listview
         listView = (ListView) findViewById(R.id.settings_actions_list);
         dataModels = new ArrayList<>();
         dataModels.add(new SettingsListModel("Logout"));
+        dataModels.add(new SettingsListModel("Sync"));
+        dataModels.add(new SettingsListModel("Db Updates"));
         dataModels.add(new SettingsListModel("About"));
         adapter = new SettingsListCustomAdapter(dataModels, getApplicationContext());
 
@@ -69,13 +83,40 @@ public class Settings extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 SettingsListModel dataModel = dataModels.get(position);
-                if (dataModel.getButtonName().equals("Logout")) {
-                   showAlert(Settings.this);
-
+                switch (dataModel.getButtonName()) {
+                    case "Logout":
+                        showLogoutAlert(Settings.this);
+                        break;
+                    case "Sync":
+                        syncDataToServer();
+                        break;
+                    case "Db Updates":
+                        dbUpdates();
+                        break;
+                    case "About":
+                        break;
                 }
 
             }
         });
+    }
+
+    private void dbUpdates() {
+        try {
+            String ADD_SYNCED_COLUMN = "ALTER TABLE expense ADD COLUMN synced INTEGER DEFAULT 0";
+            mydb.execSQL(ADD_SYNCED_COLUMN);
+            mydb.close();
+        } catch (SQLException e) {
+            Log.e(TAG, "dbUpdates: ", e);
+        }
+    }
+
+    private void syncDataToServer() {
+        try{
+            myDatabaseHelper.syncDataToFirebase();
+        }catch (Exception e){
+            Log.e(TAG, "syncDataToServer: ", e);
+        }
     }
 
     @Override
@@ -112,7 +153,7 @@ public class Settings extends AppCompatActivity {
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    private void showAlert(Context context) {
+    private void showLogoutAlert(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         // Set the title and message for the dialog

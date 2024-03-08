@@ -2,6 +2,7 @@ package com.example.walletmanager.Database;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,8 +10,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.walletmanager.Activity.Party;
+import com.example.walletmanager.Models.ExpenseModel;
 import com.example.walletmanager.Models.MyData;
 import com.example.walletmanager.Models.PartyListModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -105,5 +111,82 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         cursor.close();
         return partyList;
+    }
+
+    public void syncDataToFirebase() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String uid = currentUser.getUid();
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Expense").child(uid);
+
+            // Get the data from the SQLite database
+            SQLiteDatabase db = this.getReadableDatabase();
+            String[] projection = {
+                    "id",
+                    "date",
+                    "time",
+                    "party_name", // Renamed from 'title'
+                    "amount",
+                    "narration",
+                    "synced"
+            };
+
+            String selection = "synced = ?";
+            String[] selectionArgs = {"0"};
+
+            Cursor cursor = db.query(
+                    "expense",   // Table name
+                    projection,  // Columns to retrieve
+                    selection,   // Selection clause
+                    selectionArgs, // Selection args
+                    null,        // Group by clause
+                    null,        // Having clause
+                    null         // Order by clause
+            );
+
+            // Iterate through the cursor and insert data into Firebase
+            while (cursor.moveToNext()) {
+                String id = cursor.getString(cursor.getColumnIndexOrThrow("id"));
+                String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+                String time = cursor.getString(cursor.getColumnIndexOrThrow("time"));
+                String partyName = cursor.getString(cursor.getColumnIndexOrThrow("party_name")); // Renamed from 'title'
+                double amount = cursor.getDouble(cursor.getColumnIndexOrThrow("amount"));
+                String description = cursor.getString(cursor.getColumnIndexOrThrow("narration"));
+                int syncedValue = cursor.getInt(cursor.getColumnIndexOrThrow("synced"));
+
+                // Check if the synced field is false (0)
+                if (syncedValue == 0) {
+                    ExpenseModel expense = new ExpenseModel(id, date, time, partyName, amount, description); // Renamed from 'title'
+
+                    // Insert data into Realtime Database under the user's uid
+                    databaseReference.child(expense.getId()).setValue(expense)
+                            .addOnSuccessListener(aVoid -> {
+                                // Data successfully added, update the synced field to true
+                                updateSyncedField(id, true, db);
+                                Log.d(TAG, "Expense added with ID: " + expense.getId());
+                            })
+                            .addOnFailureListener(e -> {
+                                // Handle errors here
+                                Log.w(TAG, "Error adding expense", e);
+                            });
+                }
+            }
+
+            // Close the cursor
+            cursor.close();
+        } else {
+            // No user is signed in
+            Log.w(TAG, "User is not signed in");
+        }
+    }
+
+    private void updateSyncedField(String id, boolean synced, SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put("synced", synced ? 1 : 0);
+
+        String selection = "id = ?";
+        String[] selectionArgs = {id};
+
+        db.update("expense", values, selection, selectionArgs);
     }
 }
