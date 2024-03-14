@@ -24,7 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.walletmanager.Database.DBManager;
+import com.example.walletmanager.Database.MyDatabaseHelper;
 import com.example.walletmanager.R;
+import com.example.walletmanager.Utils.PartySelectionUtil;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -56,6 +58,7 @@ public class ExpenseActivity extends AppCompatActivity {
     SimpleDateFormat time = new SimpleDateFormat("hh:mm a");
     String currTime = time.format(c);
     StringBuilder date;
+    private MyDatabaseHelper databaseHelper;
 
     @Override
 
@@ -63,8 +66,10 @@ public class ExpenseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
         getSupportActionBar().hide();
-        layout = findViewById(R.id.expenselayout);
 
+
+        layout = findViewById(R.id.expenselayout);
+        databaseHelper = new MyDatabaseHelper(this);
         // DATE PICKER
         try {
             calendar = Calendar.getInstance();
@@ -95,68 +100,10 @@ public class ExpenseActivity extends AppCompatActivity {
     }
 
     public void selectParty(View v) {
-        try {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            LayoutInflater inflater = getLayoutInflater();
-            View convertView = (View) inflater.inflate(R.layout.select_party_list, null);
-            alertDialog.setView(convertView);
-
-            ListView lv = (ListView) convertView.findViewById(R.id.listView);
-//        listAdapter = new CustomNewInvoiceAdapter(this, R.layout.batch_sales_list, new ArrayList<OrderListModel>());
-            adapter2 = new ArrayAdapter<String>(this, R.layout.party_list, getPartyList());
-            lv.setAdapter(adapter2);
-            textPartySearch = (EditText) convertView.findViewById(R.id.partySearch);
-            textPartySearch.addTextChangedListener(new TextWatcher() {
-                public void afterTextChanged(Editable s) {
-                }
-
-                public void beforeTextChanged(CharSequence s, int start, int count,
-                                              int after) {
-                }
-
-                public void onTextChanged(CharSequence s, int start, int before,
-                                          int count) {
-                    adapter2.getFilter()
-                            .filter(textPartySearch.getText().toString());
-                }
-            });
-            final AlertDialog ad = alertDialog.show();
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapter1, View v, int position, long arg3) {
-                    String value = (String) adapter1.getItemAtPosition(position);
-                    partyButton.setText(value);
-//                partyName = value;
-//                getBalance();
-                    ad.dismiss();
-
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        PartySelectionUtil.showPartySelectionDialog(this, partyName -> {
+            partyButton.setText(partyName);
+        });
     }
-
-    public String[] getPartyList() {
-        List<String> partyList = new ArrayList<String>();
-        try {
-            mydb = openOrCreateDatabase(db.DBNAME, Context.MODE_PRIVATE, null);
-            Cursor allrows = mydb.rawQuery("SELECT name FROM PARTY", null);
-            if (allrows.moveToFirst()) {
-                do {
-                    partyList.add(allrows.getString(0));
-                } while (allrows.moveToNext());
-            }
-            mydb.close();
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
-        }
-        // Create sequence of items
-        final String[] party = partyList.toArray(new String[partyList.size()]);
-        return party;
-    }
-
     public void saveButton(View v) {
         try {
             amountString = amountInputLayout.getEditText().getText().toString();
@@ -172,9 +119,10 @@ public class ExpenseActivity extends AppCompatActivity {
                 return;
             }
 
-            mydb = openOrCreateDatabase(db.DBNAME, 0, null);
-            mydb.execSQL("INSERT INTO EXPENSE (date,time,party_name,amount,narration) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amountString + "','" + narrationString + "')");
+            SQLiteDatabase mydb = databaseHelper.getWritableDatabase();
+            databaseHelper.saveExpense(mydb, date, currTime, party, Double.parseDouble(amountString), narrationString);
             mydb.close();
+
             Snackbar.make(layout, "Expense recorded", Snackbar.LENGTH_SHORT).show();
             finish();
         } catch (Exception e) {

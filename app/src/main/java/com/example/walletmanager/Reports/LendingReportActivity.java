@@ -192,21 +192,7 @@ public class LendingReportActivity extends AppCompatActivity {
 
         MyDatabaseHelper databaseHelper = new MyDatabaseHelper(getApplicationContext());
 
-        // Create a Calendar object with the desired from and to dates
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-//        Calendar fromDate = Calendar.getInstance();
-//        Calendar toDate = Calendar.getInstance();
-//
-//        try {
-//            Date fddate = dateFormat.parse(fDate);
-//            Date tddate = dateFormat.parse(tDate);
-//            if (fddate != null && tddate != null) {
-//                fromDate.setTime(fddate);
-//                toDate.setTime(tddate);
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+
 
         // Call the getDataWithinDateRange method and obtain the data list
         List<MyData> dataList = databaseHelper.getDataWithinDateRange(partyName,fDate, tDate);

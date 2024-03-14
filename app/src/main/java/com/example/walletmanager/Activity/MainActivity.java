@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.R;
+import com.example.walletmanager.Reports.ExpenseReport;
 import com.example.walletmanager.Reports.LendingReportActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -181,9 +182,9 @@ public class MainActivity extends AppCompatActivity {
     private void launchReportActivity(int optionIndex) {
         switch (optionIndex) {
             case 0:
-//                Intent expenseIntent = new Intent(MainActivity.this, ExpenseReport.class);
-//                startActivity(expenseIntent);
-                Snackbar.make(layout, "Coming soon!", Snackbar.LENGTH_SHORT).show();
+                Intent expenseIntent = new Intent(MainActivity.this, ExpenseReport.class);
+                startActivity(expenseIntent);
+//                Snackbar.make(layout, "Coming soon!", Snackbar.LENGTH_SHORT).show();
                 break;
             case 1:
                 Intent lendingIntent = new Intent(MainActivity.this, LendingReportActivity.class);

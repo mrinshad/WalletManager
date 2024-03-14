@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.example.walletmanager.Adapters.PartyListAdapter;
 import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.Database.MyDatabaseHelper;
 import com.example.walletmanager.Models.PartyListModel;
@@ -29,7 +31,8 @@ public class Party extends AppCompatActivity {
     SQLiteDatabase mydb;
     DBManager db = new DBManager();
     RelativeLayout layout;
-    ListView listView ;
+    ListView listView;
+    private String TAG = "Party list Model";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +42,14 @@ public class Party extends AppCompatActivity {
         getSupportActionBar().hide();
 
         listView = (ListView) findViewById(R.id.listview_party);
-        MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(this);
-
-        List<PartyListModel> partyList = myDatabaseHelper.getAllParties();
-
-        ArrayAdapter<PartyListModel> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, partyList);
-        listView.setAdapter(adapter);
+        List<PartyListModel> partyList;
+        try (MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(this)) {
+            partyList = myDatabaseHelper.getAllParties();
+            PartyListAdapter adapter = new PartyListAdapter(this, partyList);
+            listView.setAdapter(adapter);
+        } catch (Exception e) {
+            Log.e(TAG, "onCreate: ", e);
+        }
 
     }
 
@@ -52,8 +57,7 @@ public class Party extends AppCompatActivity {
         try {
             final Dialog dialog2 = new Dialog(Party.this);
             dialog2.setContentView(R.layout.add_party);
-            Button addBtn = (Button) dialog2.findViewById(R.id.add_party_addButton);
-
+            Button addBtn = dialog2.findViewById(R.id.add_party_addButton);
             addBtn.setOnClickListener(new View.OnClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
@@ -61,9 +65,7 @@ public class Party extends AppCompatActivity {
                     EditText partyNameEditText, partyAmountEditText;
                     partyNameEditText = dialog2.findViewById(R.id.add_party_partyName);
                     partyAmountEditText = dialog2.findViewById(R.id.add_party_partyAmount);
-
                     String partyName, partyAmount;
-
                     partyName = partyNameEditText.getText().toString();
                     partyAmount = partyAmountEditText.getText().toString();
 
@@ -71,18 +73,15 @@ public class Party extends AppCompatActivity {
                         partyAmountEditText.setError("Please input name");
                         return;
                     }
-
                     if (partyAmount.isEmpty()) {
                         partyAmountEditText.setError("Please input amount");
                         return;
                     }
 
-                    mydb = openOrCreateDatabase(db.DBNAME, 0, null);
-                    mydb.execSQL("INSERT INTO PARTY (name,balance) VALUES ('" + partyName + "'," + Double.parseDouble(partyAmount) + ")");
-                    mydb.close();
+                    MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(Party.this);
+                    myDatabaseHelper.addParty(partyName, Double.parseDouble(partyAmount));
 
                     Snackbar.make(layout, "Party Added successfully", Snackbar.LENGTH_SHORT).show();
-
                     dialog2.dismiss();
                 }
             });

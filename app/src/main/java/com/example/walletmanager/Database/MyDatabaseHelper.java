@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.walletmanager.Models.ELBModel;
+import com.example.walletmanager.Models.ExpenseReportModel;
 import com.example.walletmanager.Models.MyData;
 import com.example.walletmanager.Models.PartyListModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -252,4 +253,61 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         c.close();
     }
 
+    public ArrayList<ExpenseReportModel> getExpenseDataFromDB() {
+        ArrayList<ExpenseReportModel> expenseReportModel = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT party_name, narration, amount FROM EXPENSE", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String partyName = cursor.getString(0);
+                String narration = cursor.getString(1);
+                double amount = cursor.getDouble(2);
+                expenseReportModel.add(new ExpenseReportModel(partyName, narration, amount));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return expenseReportModel;
+    }
+
+    public void addParty(String partyName, double partyAmount) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("name", partyName);
+        values.put("balance", partyAmount);
+
+        db.insert("PARTY", null, values);
+        db.close();
+    }
+    public List<String> getPartyName(SQLiteDatabase mydb) {
+        List<String> partyList = new ArrayList<>();
+        Cursor cursor = mydb.rawQuery("SELECT name FROM PARTY", null);
+        if (cursor.moveToFirst()) {
+            do {
+                partyList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return partyList;
+    }
+
+    public void saveBorrow(SQLiteDatabase mydb, String date, String time, String partyName, double amount, String narration) {
+        mydb.execSQL("INSERT INTO BORROW (date, time, party_name, amount, narration) VALUES (?, ?, ?, ?, ?)",
+                new Object[]{date, time, partyName, amount, narration});
+    }
+
+    public void saveExpense(SQLiteDatabase mydb, String date, String time, String partyName, double amount, String narration) {
+        mydb.execSQL("INSERT INTO EXPENSE (date, time, party_name, amount, narration) VALUES (?, ?, ?, ?, ?)",
+                new Object[]{date, time, partyName, amount, narration});
+    }
+
+    public void saveLend(SQLiteDatabase mydb, String date, String time, String partyName, double amount, String narration) {
+        mydb.execSQL("INSERT INTO LEND (date, time, party_name, amount, narration) VALUES (?, ?, ?, ?, ?)",
+                new Object[]{date, time, partyName, amount, narration});
+    }
 }
