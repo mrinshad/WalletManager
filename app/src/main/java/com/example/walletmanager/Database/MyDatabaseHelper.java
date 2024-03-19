@@ -10,8 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.walletmanager.Models.ELBModel;
-import com.example.walletmanager.Models.ExpenseReportModel;
-import com.example.walletmanager.Models.MyData;
+import com.example.walletmanager.Models.ELBReportModel;
 import com.example.walletmanager.Models.PartyListModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,42 +47,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    }
-    public List<MyData> getDataWithinDateRange(String partyName, String fromDate, String toDate) {
-        List<MyData> dataList = new ArrayList<>();
-        String query = "SELECT * FROM LEND WHERE date BETWEEN '"+fromDate+"' AND '"+toDate+"' And party_name = '"+partyName+"'";
-        Cursor cursor = db.rawQuery(query, null);
-        double total= 0.0;
-        if (cursor.moveToFirst()) {
-            do {
-                int idColumnIndex = cursor.getColumnIndex("id");
-                String id = (idColumnIndex != -1) ? cursor.getString(idColumnIndex) : "";
-
-                int dateColumnIndex = cursor.getColumnIndex("date");
-                String date = (dateColumnIndex != -1) ? cursor.getString(dateColumnIndex) : "";
-
-                int timeColumnIndex = cursor.getColumnIndex("time");
-                String time = (timeColumnIndex != -1) ? cursor.getString(timeColumnIndex) : "";
-
-                int amountColumnIndex = cursor.getColumnIndex("amount");
-                String amount = (amountColumnIndex != -1) ? cursor.getString(amountColumnIndex) : "";
-
-                int partyNameColumnIndex = cursor.getColumnIndex("party_name");
-                String party_name = (partyNameColumnIndex != -1) ? cursor.getString(partyNameColumnIndex) : "";
-
-                int narrationColumnIndex = cursor.getColumnIndex("narration");
-                String narration = (narrationColumnIndex != -1) ? cursor.getString(narrationColumnIndex) : "";
-
-                total += Double.parseDouble(amount);
-                MyData data = new MyData(id, date, time, amount, party_name,narration,total);
-                dataList.add(data);
-            } while (cursor.moveToNext());
-        }
-
-
-        cursor.close();
-        db.close();
-        return dataList;
     }
 
     // Helper method to convert a Calendar object to a string format
@@ -253,25 +216,25 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         c.close();
     }
 
-    public ArrayList<ExpenseReportModel> getExpenseDataFromDB() {
-        ArrayList<ExpenseReportModel> expenseReportModel = new ArrayList<>();
+    public ArrayList<ELBReportModel> getELBDataFromDB(String tableName) {
+        ArrayList<ELBReportModel> ELBReportModel = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT party_name, narration, amount FROM EXPENSE", null);
+        Cursor cursor = db.rawQuery("SELECT party_name, narration, amount FROM '" + tableName +"'", null);
 
         if (cursor.moveToFirst()) {
             do {
                 String partyName = cursor.getString(0);
                 String narration = cursor.getString(1);
                 double amount = cursor.getDouble(2);
-                expenseReportModel.add(new ExpenseReportModel(partyName, narration, amount));
+                ELBReportModel.add(new ELBReportModel(partyName, narration, amount));
             } while (cursor.moveToNext());
         }
 
         cursor.close();
         db.close();
 
-        return expenseReportModel;
+        return ELBReportModel;
     }
 
     public void addParty(String partyName, double partyAmount) {

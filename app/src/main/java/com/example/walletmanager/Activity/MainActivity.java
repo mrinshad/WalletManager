@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.R;
+import com.example.walletmanager.Reports.BorrowReportActivity;
 import com.example.walletmanager.Reports.ExpenseReport;
 import com.example.walletmanager.Reports.LendingReportActivity;
 import com.google.android.material.snackbar.Snackbar;
@@ -131,8 +132,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             date1 = new StringBuilder().append(year).append("-")
                     .append(month).append("-").append(day);
-//            StringBuilder date2 = new StringBuilder().append(year).append("-")
-//                    .append(month).append("-").append("01");
             dateFinal = df.format(df.parse(date1.toString()));
             mydb = openOrCreateDatabase(db.DBNAME, 0, null);
             Cursor allrows = mydb.rawQuery("select sum(amount) from EXPENSE where date = '" + date1 + "'", null);
@@ -163,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void getReports(View v) {
-        final String[] reportOptions = {"Expense Report", "Lending Report", "Party Member Details"};
+        final String[] reportOptions = {"Expense Report", "Lending Report", "Borrow Report"};
 
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -182,18 +181,13 @@ public class MainActivity extends AppCompatActivity {
     private void launchReportActivity(int optionIndex) {
         switch (optionIndex) {
             case 0:
-                Intent expenseIntent = new Intent(MainActivity.this, ExpenseReport.class);
-                startActivity(expenseIntent);
-//                Snackbar.make(layout, "Coming soon!", Snackbar.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, ExpenseReport.class));
                 break;
             case 1:
-                Intent lendingIntent = new Intent(MainActivity.this, LendingReportActivity.class);
-                startActivity(lendingIntent);
+                startActivity(new Intent(MainActivity.this, LendingReportActivity.class));
                 break;
             case 2:
-//                Intent partyIntent = new Intent(MainActivity.this, PartyMemberDetailsActivity.class);
-//                startActivity(partyIntent);
-                Snackbar.make(layout, "Coming soon!", Snackbar.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, BorrowReportActivity.class));
                 break;
         }
     }

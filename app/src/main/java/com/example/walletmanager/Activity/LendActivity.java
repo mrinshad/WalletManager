@@ -103,25 +103,6 @@ public class LendActivity extends AppCompatActivity {
         });
     }
 
-    public String[] getPartyList() {
-        List<String> partyList = new ArrayList<String>();
-        try {
-            mydb = openOrCreateDatabase(db.DBNAME, Context.MODE_PRIVATE, null);
-            Cursor allrows = mydb.rawQuery("SELECT name FROM PARTY", null);
-            if (allrows.moveToFirst()) {
-                do {
-                    partyList.add(allrows.getString(0));
-                } while (allrows.moveToNext());
-            }
-            mydb.close();
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
-        }
-        // Create sequence of items
-        final String[] party = partyList.toArray(new String[partyList.size()]);
-        return party;
-    }
-
     public void saveButton(View v) {
         try {
             amountString = amountInputLayout.getEditText().getText().toString();

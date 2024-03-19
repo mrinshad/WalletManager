@@ -2,13 +2,11 @@ package com.example.walletmanager.Reports;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.Database.MyDatabaseHelper;
 import com.example.walletmanager.Models.ELBReportModel;
 import com.example.walletmanager.R;
@@ -16,7 +14,8 @@ import com.example.walletmanager.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ExpenseReport extends AppCompatActivity {
+public class BorrowReportActivity extends AppCompatActivity {
+
     private ArrayList<ELBReportModel> ELBReportModel = new ArrayList<ELBReportModel>();
     ArrayList arrayList = new ArrayList();
     SimpleAdapter adapter;
@@ -24,11 +23,11 @@ public class ExpenseReport extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_expense_report);
+        setContentView(R.layout.activity_borrow_report);
         getSupportActionBar().hide();
 
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(this);
-        ELBReportModel = dbHelper.getELBDataFromDB("EXPENSE");
+        ELBReportModel = dbHelper.getELBDataFromDB("BORROW");
 
         ListView listView = findViewById(R.id.listView);
         adapter = new SimpleAdapter(this, arrayList,

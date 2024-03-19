@@ -1,8 +1,8 @@
 package com.example.walletmanager.Models;
 
-public class ExpenseReportModel {
+public class ELBReportModel {
 
-    public ExpenseReportModel(String partyName, String narration, double amount) {
+    public ELBReportModel(String partyName, String narration, double amount) {
 
         this.setPatyName(partyName);
         this.setNarration(narration);
