@@ -33,6 +33,7 @@ public class Party extends AppCompatActivity {
     RelativeLayout layout;
     ListView listView;
     private String TAG = "Party list Model";
+    private MyDatabaseHelper myDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,8 @@ public class Party extends AppCompatActivity {
         setContentView(R.layout.activity_party);
         layout = findViewById(R.id.partyLayout);
         getSupportActionBar().hide();
+
+        myDatabaseHelper = new MyDatabaseHelper(this);
 
         listView = (ListView) findViewById(R.id.listview_party);
         List<PartyListModel> partyList;
@@ -51,6 +54,12 @@ public class Party extends AppCompatActivity {
             Log.e(TAG, "onCreate: ", e);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        myDatabaseHelper.close();
     }
 
     public void addParty(View v) {
@@ -78,16 +87,23 @@ public class Party extends AppCompatActivity {
                         return;
                     }
 
-                    MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(Party.this);
-                    myDatabaseHelper.addParty(partyName, Double.parseDouble(partyAmount));
-
-                    Snackbar.make(layout, "Party Added successfully", Snackbar.LENGTH_SHORT).show();
+                    myDatabaseHelper.addParty(partyName.trim(), Double.parseDouble(partyAmount),Party.this,layout);
+//                    Snackbar.make(layout, "Party Added successfully", Snackbar.LENGTH_SHORT).show();
                     dialog2.dismiss();
+
+                    // Refresh the ListView
+                    List<PartyListModel> partyList = myDatabaseHelper.getAllParties();
+                    PartyListAdapter adapter = new PartyListAdapter(Party.this, partyList);
+                    listView.setAdapter(adapter);
                 }
             });
             dialog2.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void goBack(View v){
+        finish();
     }
 }

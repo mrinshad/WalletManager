@@ -12,9 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WalletManager">
         <activity
+            android:name=".Activity.ReportActivity"
+            android:exported="false" />
+        <activity
             android:name=".Reports.BorrowReportActivity"
             android:exported="false"
-            android:theme="@style/BorrowActivityTheme"/>
+            android:theme="@style/BorrowActivityTheme" />
         <activity
             android:name=".Activity.BorrowActivity"
             android:exported="false"

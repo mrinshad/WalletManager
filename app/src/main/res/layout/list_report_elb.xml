@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
@@ -19,7 +19,7 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -28,56 +28,45 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:orientation="vertical">
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:id="@+id/notAmount"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:weightSum="100">
-
-                    <TextView
-                        android:id="@+id/idTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="id"
-                        android:visibility="gone"
-                        android:textSize="20sp" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/partyNameTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:layout_toEndOf="@+id/idTextView"
-                        android:layout_toRightOf="@+id/idTextView"
-                        android:text="party"
+                        android:text="party_name"
                         android:textSize="20sp" />
-
-                    <TextView
-                        android:id="@+id/amountTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="8dp"
-                        android:text="amount"
-                        android:textSize="20sp" />
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp">
 
                     <TextView
                         android:id="@+id/narrationTextView"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="25"
-                        android:text="narration"
-                        android:textSize="16sp" />
+                        android:layout_marginStart="5dp"
+                        android:text="narration_text"
+                        android:textSize="10sp" />
+
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/amountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="end"
+                    android:text="amount"
+                    android:textSize="20sp" />
+
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

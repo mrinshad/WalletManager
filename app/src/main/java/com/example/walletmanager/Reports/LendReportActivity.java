@@ -18,7 +18,7 @@ import com.example.walletmanager.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class BorrowReportActivity extends Fragment {
+public class LendReportActivity extends Fragment {
 
     private ArrayList<ELBReportModel> ELBReportModel = new ArrayList<>();
     private ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
@@ -27,10 +27,10 @@ public class BorrowReportActivity extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_borrow_report, container, false);
+        View view = inflater.inflate(R.layout.activity_lending_report, container, false);
 
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(getContext());
-        ELBReportModel = dbHelper.getELBDataFromDB("BORROW");
+        ELBReportModel = dbHelper.getELBDataFromDB("LEND");
 
         ListView listView = view.findViewById(R.id.listView);
         adapter = new SimpleAdapter(getContext(), arrayList, R.layout.list_report_elb, new String[]{"sino", "party", "narration", "amount"}, new int[]{R.id.idTextView, R.id.partyNameTextView, R.id.narrationTextView, R.id.amountTextView});

@@ -21,9 +21,6 @@ import android.widget.TextView;
 
 import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.R;
-import com.example.walletmanager.Reports.BorrowReportActivity;
-import com.example.walletmanager.Reports.ExpenseReport;
-import com.example.walletmanager.Reports.LendingReportActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -162,34 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void getReports(View v) {
-        final String[] reportOptions = {"Expense Report", "Lending Report", "Borrow Report"};
-
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose a report");
-        builder.setItems(reportOptions, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                launchReportActivity(which);
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    private void launchReportActivity(int optionIndex) {
-        switch (optionIndex) {
-            case 0:
-                startActivity(new Intent(MainActivity.this, ExpenseReport.class));
-                break;
-            case 1:
-                startActivity(new Intent(MainActivity.this, LendingReportActivity.class));
-                break;
-            case 2:
-                startActivity(new Intent(MainActivity.this, BorrowReportActivity.class));
-                break;
-        }
+        startActivity(new Intent(getApplicationContext(), ReportActivity.class));
     }
 
     public void partyDetails(View v) {

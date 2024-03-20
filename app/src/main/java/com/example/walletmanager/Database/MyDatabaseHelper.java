@@ -8,10 +8,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.walletmanager.Models.ELBModel;
 import com.example.walletmanager.Models.ELBReportModel;
 import com.example.walletmanager.Models.PartyListModel;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -35,7 +38,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     String COLUMN_DATE = "date";
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-    SQLiteDatabase db = getReadableDatabase();
 
     // Constructor
     public MyDatabaseHelper(Context context) {
@@ -57,6 +59,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     public List<PartyListModel> getAllParties() {
         List<PartyListModel> partyList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase(); // Open a new database connection
+
         Cursor cursor = db.query("PARTY", null, null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -70,6 +74,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
+        db.close(); // Close the database connection
+
         return partyList;
     }
 
@@ -237,15 +243,53 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return ELBReportModel;
     }
 
-    public void addParty(String partyName, double partyAmount) {
+    public void addParty(String partyName, double partyAmount, Context context,RelativeLayout layout) {
         SQLiteDatabase db = this.getWritableDatabase();
 
+        // Check if a party with the same name already exists
+        String selectQuery = "SELECT * FROM PARTY WHERE name = ?";
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{partyName});
+
+        if (cursor.moveToFirst()) {
+            // Party with the same name already exists
+            cursor.close();
+            db.close();
+
+            // Show an error message or take appropriate action
+            showDuplicatePartyError(context, partyName,layout);
+            return;
+        }
+
+        cursor.close();
+
+        // No duplicate found, insert the new party
         ContentValues values = new ContentValues();
         values.put("name", partyName);
         values.put("balance", partyAmount);
+        long rowId = db.insert("PARTY", null, values);
 
-        db.insert("PARTY", null, values);
+        if (rowId != -1) {
+            // Party added successfully
+            showPartyAddedSuccessfully(context,layout);
+        } else {
+            // Error adding party
+            showErrorAddingParty(context,layout);
+        }
+
         db.close();
+    }
+
+    private void showDuplicatePartyError(Context context, String partyName, RelativeLayout layout) {
+        String message = "Party '" + partyName + "' already exists.";
+        Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void showPartyAddedSuccessfully(Context context, RelativeLayout layout) {
+        Snackbar.make(layout, "Party added successfully", Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void showErrorAddingParty(Context context, RelativeLayout layout) {
+        Snackbar.make(layout, "Error adding party", Snackbar.LENGTH_SHORT).show();
     }
     public List<String> getPartyName(SQLiteDatabase mydb) {
         List<String> partyList = new ArrayList<>();
@@ -273,4 +317,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         mydb.execSQL("INSERT INTO LEND (date, time, party_name, amount, narration) VALUES (?, ?, ?, ?, ?)",
                 new Object[]{date, time, partyName, amount, narration});
     }
+
+
 }
