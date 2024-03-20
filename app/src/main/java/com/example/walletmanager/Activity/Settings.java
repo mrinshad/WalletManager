@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -19,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.walletmanager.Adapters.SettingsListCustomAdapter;
 import com.example.walletmanager.Database.DBManager;
@@ -28,12 +31,13 @@ import com.example.walletmanager.R;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
-public class Settings extends AppCompatActivity {
+public class Settings extends AppCompatActivity  implements MyDatabaseHelper.SyncCallback {
 
     private static final String TAG = "Settings";
     private FirebaseAuth mAuth;
@@ -43,6 +47,10 @@ public class Settings extends AppCompatActivity {
     SQLiteDatabase mydb;
     DBManager db = new DBManager();
     MyDatabaseHelper myDatabaseHelper;
+    TextView descTextView;
+
+
+    StringBuilder unsyncedTables = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +67,9 @@ public class Settings extends AppCompatActivity {
 //        listview
         listView = (ListView) findViewById(R.id.settings_actions_list);
         dataModels = new ArrayList<>();
-        dataModels.add(new SettingsListModel("Logout"));
-        dataModels.add(new SettingsListModel("Sync"));
-        dataModels.add(new SettingsListModel("Db Updates"));
-        dataModels.add(new SettingsListModel("About"));
+        dataModels.add(new SettingsListModel("Firebase Mode","",true));
+        dataModels.add(new SettingsListModel("Upload to server",hasUnsyncedData()? unsyncedTables.toString() : "",false));
+        dataModels.add(new SettingsListModel("About","",false));
         adapter = new SettingsListCustomAdapter(dataModels, getApplicationContext());
 
         listView.setAdapter(adapter);
@@ -77,7 +84,11 @@ public class Settings extends AppCompatActivity {
                         showLogoutAlert(Settings.this);
                         break;
                     case "Sync":
-                        syncDataToServer();
+                        if (hasUnsyncedData()) {
+                            syncDataToServer();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Nothing to sync", Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     case "Db Updates":
                         dbUpdates();
@@ -89,6 +100,47 @@ public class Settings extends AppCompatActivity {
             }
         });
     }
+    private boolean hasUnsyncedData() {
+        getUnsyncedTables();
+        if (unsyncedTables != null && unsyncedTables.length() > 0) {
+            return true;
+        } else {
+            System.out.println("StringBuilder is null or empty");
+            return false; // Placeholder return value, replace with actual implementation
+        }
+
+    }
+
+    private String getUnsyncedTables() {
+        MyDatabaseHelper databaseHelper = new MyDatabaseHelper(getApplicationContext());
+        SQLiteDatabase mydb = databaseHelper.getWritableDatabase(); // Initialize StringBuilder to store table names
+
+        try {
+            // Check if there's unsynced data in each table
+            int count = 0;
+            String[] tables = {"Expense", "Lend", "Borrow"};
+            for (int i = 0; i < tables.length; i++) {
+                String table = tables[i];
+                Cursor cursor = mydb.rawQuery("SELECT COUNT(*) FROM " + table + " WHERE synced = 0", null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    int unsyncedCount = cursor.getInt(0);
+                    if (unsyncedCount > 0) {
+                        if (unsyncedTables.length() > 1)
+                            unsyncedTables.append(", ");
+                        unsyncedTables.append(table);
+                    }
+                    count++;
+                }
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "getUnsyncedTables: ", e);
+        }
+        return unsyncedTables.toString();
+    }
+
 
     private void dbUpdates() {
         try {
@@ -103,9 +155,9 @@ public class Settings extends AppCompatActivity {
 
     private void syncDataToServer() {
         try {
-            myDatabaseHelper.syncDataToFirebase("Expense");
-            myDatabaseHelper.syncDataToFirebase("Lend");
-            myDatabaseHelper.syncDataToFirebase("Borrow");
+            myDatabaseHelper.syncDataToFirebase("Expense",this);
+            myDatabaseHelper.syncDataToFirebase("Lend",this);
+            myDatabaseHelper.syncDataToFirebase("Borrow",this);
             myDatabaseHelper.insertPartyToFirebase();
 
         } catch (Exception e) {
@@ -118,17 +170,9 @@ public class Settings extends AppCompatActivity {
         super.onStart();
         if (isNetworkAvailable()) {
             FirebaseUser currentUser = mAuth.getCurrentUser();
-            if (currentUser == null) {
-//                if (logout.getVisibility() == View.VISIBLE){
-//                    logout.setVisibility(View.INVISIBLE);
-//                }
-            } else {
-//                if (logout.getVisibility() == View.INVISIBLE){
-//                    logout.setVisibility(View.VISIBLE);
-//                }
+            if (currentUser != null) {
+                dataModels.add(new SettingsListModel("Logout",currentUser.getEmail(),false));
             }
-        } else {
-//            logout.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -233,4 +277,15 @@ public class Settings extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onSyncSuccess() {
+        Toast.makeText(this,"Sync succesfull",Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    @Override
+    public void onSyncFailure(Exception e) {
+        Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show();
+        finish();
+    }
 }

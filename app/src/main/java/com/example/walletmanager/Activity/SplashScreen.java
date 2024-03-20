@@ -75,6 +75,7 @@ public class SplashScreen extends AppCompatActivity {
         mydb.execSQL(db.TABLE_PARTY);
         mydb.execSQL(db.TABLE_LEND);
         mydb.execSQL(db.TABLE_BORROW);
+        mydb.execSQL(db.TABLE_SHARED_PREF);
 
         mydb.close();
     }

@@ -3,6 +3,8 @@
     <string name="app_name_with_version">Wallet Manager v1.0</string>
     <string name="default_web_client_id">130513058681-fq3khts5ijf5hqkk3arugj2umf6kdji6.apps.googleusercontent.com</string>
     <string name="logout">LOGOUT</string>
+    <string name="setting_list_item">_list_item_#</string>
+    <string name="setting_list_item_desc">This is a dummy list item description</string>
     <string name="about">ABOUT</string>
     <string name="logout_alert">Do you want to logout?</string>
     <string name="decline">DECLINE</string>

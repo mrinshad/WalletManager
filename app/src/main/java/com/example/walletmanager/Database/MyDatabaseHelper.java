@@ -78,8 +78,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         return partyList;
     }
+    public interface SyncCallback {
+        void onSyncSuccess();
+        void onSyncFailure(Exception e);
+    }
 
-    public void syncDataToFirebase(String tablename) {
+
+    public void syncDataToFirebase(String tablename, SyncCallback callback) {
         if (currentUser != null) {
             String uid = currentUser.getUid();
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(uid).child(tablename);
@@ -128,10 +133,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                             .addOnSuccessListener(aVoid -> {
                                 // Data successfully added, update the synced field to true
                                 updateSyncedField(id, true, db,tablename);
+                                Log.w(TAG, "Entry added");
+                                callback.onSyncSuccess();
                             })
                             .addOnFailureListener(e -> {
                                 // Handle errors here
                                 Log.w(TAG, "Error adding expense", e);
+                                callback.onSyncFailure(e);
                             });
                 }
             }
@@ -141,6 +149,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         } else {
             // No user is signed in
             Log.w(TAG, "User is not signed in");
+            callback.onSyncFailure(new Exception("User is not signed in"));
         }
     }
 
