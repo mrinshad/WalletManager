@@ -17,7 +17,6 @@ public class DBManager {
     public String TABLE_LEND = "CREATE TABLE IF NOT EXISTS LEND(id INTEGER PRIMARY KEY AUTOINCREMENT,date DATETIME,time TEXT,party_name TEXT,amount double,narration TEXT,synced INTEGER DEFAULT 0)";
     public String TABLE_BORROW = "CREATE TABLE IF NOT EXISTS BORROW(id INTEGER PRIMARY KEY AUTOINCREMENT,date DATETIME,time TEXT,party_name TEXT,amount double,narration TEXT,synced INTEGER DEFAULT 0)";
     public String TABLE_PARTY = "CREATE TABLE IF NOT EXISTS PARTY(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,balance double,synced INTEGER DEFAULT 0)";
-    public String TABLE_SHARED_PREF = "CREATE TABLE IF NOT EXISTS SHARED_PREF(id INTEGER PRIMARY KEY AUTOINCREMENT,variable TEXT,value INTEGER DEFAULT 0)";
 
     public String dateOrTimeConverter(int num) {
         String newNum = "";

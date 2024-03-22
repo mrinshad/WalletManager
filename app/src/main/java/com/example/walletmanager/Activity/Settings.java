@@ -9,18 +9,19 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.walletmanager.Adapters.SettingsListCustomAdapter;
@@ -31,13 +32,12 @@ import com.example.walletmanager.R;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
-public class Settings extends AppCompatActivity  implements MyDatabaseHelper.SyncCallback {
+public class Settings extends AppCompatActivity implements MyDatabaseHelper.SyncCallback, SettingsListCustomAdapter.OnToggleChangeListener {
 
     private static final String TAG = "Settings";
     private FirebaseAuth mAuth;
@@ -47,7 +47,7 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
     SQLiteDatabase mydb;
     DBManager db = new DBManager();
     MyDatabaseHelper myDatabaseHelper;
-    TextView descTextView;
+    private SharedPreferences sharedPreferences;
 
 
     StringBuilder unsyncedTables = new StringBuilder();
@@ -64,15 +64,18 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
         mAuth = FirebaseAuth.getInstance();
         mydb = openOrCreateDatabase(db.DBNAME, 0, null);
         myDatabaseHelper = new MyDatabaseHelper(this);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
 //        listview
         listView = (ListView) findViewById(R.id.settings_actions_list);
         dataModels = new ArrayList<>();
-        dataModels.add(new SettingsListModel("Firebase Mode","",true));
-        dataModels.add(new SettingsListModel("Upload to server",hasUnsyncedData()? unsyncedTables.toString() : "",false));
-        dataModels.add(new SettingsListModel("About","",false));
+        dataModels.add(new SettingsListModel("Upload to server", hasUnsyncedData() ? unsyncedTables.toString() : "", false));
+        dataModels.add(new SettingsListModel("Firebase Mode", "", true));
+        dataModels.add(new SettingsListModel("About", "", false));
         adapter = new SettingsListCustomAdapter(dataModels, getApplicationContext());
 
         listView.setAdapter(adapter);
+        adapter.setOnToggleChangeListener(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @SuppressLint("PrivateResource")
             @Override
@@ -83,7 +86,7 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
                     case "Logout":
                         showLogoutAlert(Settings.this);
                         break;
-                    case "Sync":
+                    case "Upload to server":
                         if (hasUnsyncedData()) {
                             syncDataToServer();
                         } else {
@@ -100,6 +103,8 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
             }
         });
     }
+
+
     private boolean hasUnsyncedData() {
         getUnsyncedTables();
         if (unsyncedTables != null && unsyncedTables.length() > 0) {
@@ -118,7 +123,7 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
         try {
             // Check if there's unsynced data in each table
             int count = 0;
-            String[] tables = {"Expense", "Lend", "Borrow"};
+            String[] tables = {"EXPENSE", "LEND", "BORROW","PARTY"};
             for (int i = 0; i < tables.length; i++) {
                 String table = tables[i];
                 Cursor cursor = mydb.rawQuery("SELECT COUNT(*) FROM " + table + " WHERE synced = 0", null);
@@ -155,10 +160,12 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
 
     private void syncDataToServer() {
         try {
-            myDatabaseHelper.syncDataToFirebase("Expense",this);
-            myDatabaseHelper.syncDataToFirebase("Lend",this);
-            myDatabaseHelper.syncDataToFirebase("Borrow",this);
+            myDatabaseHelper.syncELBDataToFirebase("EXPENSE", this);
+            myDatabaseHelper.syncELBDataToFirebase("LEND", this);
+            myDatabaseHelper.syncELBDataToFirebase("BORROW", this);
             myDatabaseHelper.insertPartyToFirebase();
+            Toast.makeText(getApplicationContext(),"Data uploaded to server",Toast.LENGTH_SHORT).show();
+            finish();
 
         } catch (Exception e) {
             Log.e(TAG, "syncDataToServer: ", e);
@@ -171,7 +178,7 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
         if (isNetworkAvailable()) {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser != null) {
-                dataModels.add(new SettingsListModel("Logout",currentUser.getEmail(),false));
+                dataModels.add(new SettingsListModel("Logout", currentUser.getEmail(), false));
             }
         }
     }
@@ -201,7 +208,7 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
         builder.setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                clearAllDataFromDatabase(context,dialog);
+                clearAllDataFromDatabase(context, dialog);
             }
         });
 
@@ -217,7 +224,7 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
         alertDialog.show();
     }
 
-    private void clearAllDataFromDatabase(Context context,DialogInterface dialog) {
+    private void clearAllDataFromDatabase(Context context, DialogInterface dialog) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         // Set the title and message for the dialog
@@ -279,13 +286,26 @@ public class Settings extends AppCompatActivity  implements MyDatabaseHelper.Syn
 
     @Override
     public void onSyncSuccess() {
-        Toast.makeText(this,"Sync succesfull",Toast.LENGTH_SHORT).show();
         finish();
     }
 
     @Override
     public void onSyncFailure(Exception e) {
-        Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    @Override
+    public void onToggleChanged(boolean isChecked, int position) {
+        SettingsListModel model = dataModels.get(position);
+        if (model.getButtonName().equals("Firebase Mode")) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("firebase_mode", isChecked);
+            editor.apply();
+        } else {
+            // Handle other toggle buttons if needed
+        }
+        Log.d(TAG, "onToggleChanged: " + isChecked);
+
     }
 }

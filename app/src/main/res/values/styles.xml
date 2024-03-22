@@ -82,7 +82,4 @@
         <item name="colorSecondary">@color/color_for_settings</item>
         <item name="android:statusBarColor">@color/color_for_settings</item>
     </style>
-
-
-
 </resources>

@@ -39,7 +39,7 @@ public class SplashScreen extends AppCompatActivity {
         progressText = findViewById(R.id.progressText);
         contentLayout = findViewById(R.id.contentLayout);
 
-        new CountDownTimer(3000, 1000) { // Increased the countdown to 3 seconds for better visibility
+        new CountDownTimer(1000, 1000) { // Increased the countdown to 3 seconds for better visibility
 
             public void onTick(long millisUntilFinished) {
                 // This method will be called every 1 second (you can leave it empty)
@@ -75,7 +75,6 @@ public class SplashScreen extends AppCompatActivity {
         mydb.execSQL(db.TABLE_PARTY);
         mydb.execSQL(db.TABLE_LEND);
         mydb.execSQL(db.TABLE_BORROW);
-        mydb.execSQL(db.TABLE_SHARED_PREF);
 
         mydb.close();
     }

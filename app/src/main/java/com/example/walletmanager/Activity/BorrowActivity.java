@@ -1,46 +1,43 @@
 package com.example.walletmanager.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.database.Cursor;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
+import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walletmanager.Database.DBManager;
 import com.example.walletmanager.Database.MyDatabaseHelper;
+import com.example.walletmanager.Models.ELBModel;
 import com.example.walletmanager.R;
 import com.example.walletmanager.Utils.PartySelectionUtil;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+
 
 public class BorrowActivity extends AppCompatActivity {
 
-    RelativeLayout relativeLayout,toolbar;
-    Button partyButton,saveButton;
+    RelativeLayout relativeLayout, toolbar;
+    Button partyButton, saveButton;
 
     ArrayAdapter<String> adapter2;
     SQLiteDatabase mydb;
@@ -52,12 +49,15 @@ public class BorrowActivity extends AppCompatActivity {
     String amountString, narrationString, dateFinal;
     String day, month, year;
     Calendar calendar;
-    Date c = new Date();
+    Date dateInit = new Date();
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat time = new SimpleDateFormat("hh:mm a");
-    String currTime = time.format(c);
+    String currTime = time.format(dateInit);
     StringBuilder date;
     private MyDatabaseHelper databaseHelper;
+    private SharedPreferences sharedPreferences;
+    boolean isFirebaseMode;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +65,11 @@ public class BorrowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_borrow);
         getSupportActionBar().hide();
 
+        // Getting the value of firebase_mode from sharedPreference
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        isFirebaseMode = sharedPreferences.getBoolean("firebase_mode", false);
+
+        // Inits
         databaseHelper = new MyDatabaseHelper(this);
         relativeLayout = findViewById(R.id.borrowlayout);
         toolbar = findViewById(R.id.toolbar);
@@ -105,29 +110,29 @@ public class BorrowActivity extends AppCompatActivity {
     }
 
     public void saveButton(View v) {
+        amountString = amountInputLayout.getEditText().getText().toString();
+        narrationString = narrationInputLayout.getEditText().getText().toString();
+        String date = dateFinal;
+        String party = partyButton.getText().toString();
+        SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+        String datetime = ft.format(dateInit);
+        if (party.equals("PARTY")) {
+            Snackbar.make(relativeLayout, "Please select a party", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        if (amountString.isEmpty()) {
+            amountInputLayout.setError("Field cannot be empty");
+            return;
+        }
         try {
-            amountString = amountInputLayout.getEditText().getText().toString();
-            narrationString = narrationInputLayout.getEditText().getText().toString();
-            String date = dateFinal;
-            String party = partyButton.getText().toString();
-            if (party.equals("PARTY")) {
-                Snackbar.make(relativeLayout, "Please select a party", Snackbar.LENGTH_SHORT).show();
-                return;
-            }
-            if (amountString.isEmpty()) {
-                amountInputLayout.setError("Field cannot be empty");
-                return;
-            }
-
             SQLiteDatabase mydb = databaseHelper.getWritableDatabase();
-            databaseHelper.saveBorrow(mydb, date, currTime, party, Double.parseDouble(amountString), narrationString);
-            mydb.close();
-
-            Snackbar.make(relativeLayout, "Borrow recorded", Snackbar.LENGTH_SHORT).show();
+            databaseHelper.saveELB(datetime, isFirebaseMode, "BORROW", mydb, date, currTime, party, Double.parseDouble(amountString), narrationString);
             finish();
+//                Snackbar.make(relativeLayout, "Borrow recorded", Snackbar.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     @Override

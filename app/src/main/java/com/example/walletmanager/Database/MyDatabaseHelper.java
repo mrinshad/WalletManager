@@ -4,12 +4,15 @@ import static android.content.ContentValues.TAG;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.example.walletmanager.Models.ELBModel;
 import com.example.walletmanager.Models.ELBReportModel;
@@ -17,12 +20,16 @@ import com.example.walletmanager.Models.PartyListModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,18 +37,18 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     // Database related constants
     private static final String DATABASE_NAME = "WalletManager.db";
     private static final int DATABASE_VERSION = 1;
-
-    // Table related constants
-    String TABLE_NAME = "Lend";
-    String COLUMN_TITLE = "title";
-    String COLUMN_DESCRIPTION = "description";
-    String COLUMN_DATE = "date";
-
-    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    private boolean isFirebaseMode;
+    private SharedPreferences sharedPreferences;
+    private FirebaseAuth mAuth;
+    FirebaseUser currentUser ;
 
     // Constructor
     public MyDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        isFirebaseMode = sharedPreferences.getBoolean("firebase_mode", false);
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -57,34 +64,68 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return sdf.format(calendar.getTime());
     }
 
-    public List<PartyListModel> getAllParties() {
-        List<PartyListModel> partyList = new ArrayList<>();
-        SQLiteDatabase db = getReadableDatabase(); // Open a new database connection
+    public void getAllParties(OnPartyDataListener listener) {
+        if (isFirebaseMode) {
+            String uid = mAuth.getUid();
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("PARTY");
+            getPartyFromFirebase(uid, databaseReference, listener);
+        } else {
+            SQLiteDatabase db = getReadableDatabase(); // Open a new database connection
+            Cursor cursor = db.query("PARTY", null, null, null, null, null, null);
 
-        Cursor cursor = db.query("PARTY", null, null, null, null, null, null);
+            List<PartyListModel> partyList = new ArrayList<>();
+            if (cursor.moveToFirst()) {
+                do {
+                    String id = cursor.getString(cursor.getColumnIndex("id"));
+                    String name = cursor.getString(cursor.getColumnIndex("name"));
+                    double balance = cursor.getDouble(cursor.getColumnIndex("balance"));
+                    PartyListModel party = new PartyListModel(id, name, balance);
+                    partyList.add(party);
+                } while (cursor.moveToNext());
+            }
 
-        if (cursor.moveToFirst()) {
-            do {
-                long id = cursor.getLong(cursor.getColumnIndex("id"));
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                double balance = cursor.getDouble(cursor.getColumnIndex("balance"));
-                PartyListModel party = new PartyListModel(id, name, balance);
-                partyList.add(party);
-            } while (cursor.moveToNext());
+            cursor.close();
+            db.close(); // Close the database connection
+
+            listener.onPartyDataReceived(partyList); // Notify listener with the partyList
         }
-
-        cursor.close();
-        db.close(); // Close the database connection
-
-        return partyList;
     }
+
+
     public interface SyncCallback {
         void onSyncSuccess();
         void onSyncFailure(Exception e);
     }
+    public interface OnPartyDataListener {
+        void onPartyDataReceived(List<PartyListModel> partyList);
+    }
 
+    public void getPartyFromFirebase(String uid, DatabaseReference databaseReference, OnPartyDataListener listener) {
+        databaseReference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<PartyListModel> partyList = new ArrayList<>();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot partySnapshot : dataSnapshot.getChildren()) {
+                        String id = partySnapshot.child("id").getValue(String.class);
+                        String name = partySnapshot.child("name").getValue(String.class);
+                        double balance = partySnapshot.child("balance").getValue(Double.class);
+                        PartyListModel party = new PartyListModel(id, name, balance);
+                        partyList.add(party);
+                    }
+                }
+                listener.onPartyDataReceived(partyList);
+            }
 
-    public void syncDataToFirebase(String tablename, SyncCallback callback) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Database Error: " + databaseError.getMessage());
+                listener.onPartyDataReceived(null); // Notify listener about the error
+            }
+        });
+    }
+
+    public void syncELBDataToFirebase(String tablename, SyncCallback callback) {
         if (currentUser != null) {
             String uid = currentUser.getUid();
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(uid).child(tablename);
@@ -116,7 +157,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
             // Iterate through the cursor and insert data into Firebase
             while (cursor.moveToNext()) {
-                String id = cursor.getString(cursor.getColumnIndexOrThrow("id"));
+                SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+                String id = ft.format(new Date());
+                String idOld = cursor.getString(cursor.getColumnIndexOrThrow("id"));
                 String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
                 String time = cursor.getString(cursor.getColumnIndexOrThrow("time"));
                 String partyName = cursor.getString(cursor.getColumnIndexOrThrow("party_name")); // Renamed from 'title'
@@ -132,7 +175,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                     databaseReference.child(expense.getId()).setValue(expense)
                             .addOnSuccessListener(aVoid -> {
                                 // Data successfully added, update the synced field to true
-                                updateSyncedField(id, true, db,tablename);
+                                updateSyncedField(idOld, true, db,tablename);
                                 Log.w(TAG, "Entry added");
                                 callback.onSyncSuccess();
                             })
@@ -156,7 +199,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public void insertPartyToFirebase(){
         if (currentUser != null) {
             String uid = currentUser.getUid();
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(uid).child("Party");
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("PARTY").child(uid);
 
             // Get the data from the SQLite database
             SQLiteDatabase db = this.getReadableDatabase();
@@ -182,7 +225,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
             // Iterate through the cursor and insert data into Firebase
             while (cursor.moveToNext()) {
-                long id = cursor.getLong(cursor.getColumnIndexOrThrow("id"));
+                String id = cursor.getString(cursor.getColumnIndexOrThrow("id"));
                 String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
                 double balance = cursor.getDouble(cursor.getColumnIndexOrThrow("balance"));
                 int syncedValue = cursor.getInt(cursor.getColumnIndexOrThrow("synced"));
@@ -192,7 +235,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                     PartyListModel party = new PartyListModel(id, name,balance); // Renamed from 'title'
 
                     // Insert data into Realtime Database under the user's uid
-                    databaseReference.child(String.valueOf(party.getId())).setValue(party)
+                    databaseReference.child(party.getName()).setValue(party)
                             .addOnSuccessListener(aVoid -> {
                                 // Data successfully added, update the synced field to true
                                 updateSyncedField(String.valueOf(id), true, db,"party");
@@ -251,41 +294,82 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         return ELBReportModel;
     }
+    public interface OnPartyAddedListener {
+        void onPartyAdded();
+    }
 
-    public void addParty(String partyName, double partyAmount, Context context,RelativeLayout layout) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public void addParty(boolean status, String partyName, double partyAmount, OnPartyAddedListener listener, Context context, RelativeLayout layout) {
 
-        // Check if a party with the same name already exists
-        String selectQuery = "SELECT * FROM PARTY WHERE name = ?";
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{partyName});
+        if (status){
 
-        if (cursor.moveToFirst()) {
-            // Party with the same name already exists
+            String uid = currentUser.getUid();
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("PARTY").child(uid);
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        // Check if the desired value exists within the data
+                        if (dataSnapshot.hasChild(partyName)) { // Replace "specificField" with your actual field name
+                            Snackbar.make(layout, "Party Already Exists", Snackbar.LENGTH_SHORT).show();
+                            // The value exists, handle it here
+                        } else {
+                            SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+                            String datetime = ft.format(new Date());
+                            PartyListModel party = new PartyListModel(datetime, partyName,partyAmount);
+                            databaseReference.child(party.getName()).setValue(party);
+                        }
+                    } else {
+                        // Get a reference to the database
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("PARTY");
+                        SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+                        String datetime = ft.format(new Date());
+                        PartyListModel party = new PartyListModel(datetime, partyName,partyAmount);
+                        databaseReference.child(uid).child(party.getName()).setValue(party);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w("TAG", "Failed to read data", databaseError.toException());
+                }
+            });
+            listener.onPartyAdded();
+        }else {
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            // Check if a party with the same name already exists
+            String selectQuery = "SELECT * FROM PARTY WHERE name = ?";
+            Cursor cursor = db.rawQuery(selectQuery, new String[]{partyName});
+
+            if (cursor.moveToFirst()) {
+                // Party with the same name already exists
+                cursor.close();
+                db.close();
+
+                // Show an error message or take appropriate action
+                showDuplicatePartyError(context, partyName, layout);
+                return;
+            }
+
             cursor.close();
+
+            // No duplicate found, insert the new party
+            ContentValues values = new ContentValues();
+            values.put("name", partyName);
+            values.put("balance", partyAmount);
+            long rowId = db.insert("PARTY", null, values);
+
+            if (rowId != -1) {
+                // Party added successfully
+                showPartyAddedSuccessfully(context, layout);
+            } else {
+                // Error adding party
+                showErrorAddingParty(context, layout);
+            }
+
             db.close();
-
-            // Show an error message or take appropriate action
-            showDuplicatePartyError(context, partyName,layout);
-            return;
+            listener.onPartyAdded();
         }
-
-        cursor.close();
-
-        // No duplicate found, insert the new party
-        ContentValues values = new ContentValues();
-        values.put("name", partyName);
-        values.put("balance", partyAmount);
-        long rowId = db.insert("PARTY", null, values);
-
-        if (rowId != -1) {
-            // Party added successfully
-            showPartyAddedSuccessfully(context,layout);
-        } else {
-            // Error adding party
-            showErrorAddingParty(context,layout);
-        }
-
-        db.close();
     }
 
     private void showDuplicatePartyError(Context context, String partyName, RelativeLayout layout) {
@@ -312,20 +396,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return partyList;
     }
 
-    public void saveBorrow(SQLiteDatabase mydb, String date, String time, String partyName, double amount, String narration) {
-        mydb.execSQL("INSERT INTO BORROW (date, time, party_name, amount, narration) VALUES (?, ?, ?, ?, ?)",
-                new Object[]{date, time, partyName, amount, narration});
+    public void saveELB(String id,boolean status,String tableName,SQLiteDatabase mydb, String date, String time, String partyName, double amount, String narration) {
+        if (status) {
+            String uid = mAuth.getUid();
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(tableName).child(uid);
+            ELBModel entry = new ELBModel(id, date, time.toString(), partyName,amount, narration);
+            databaseReference.child(entry.getId()).setValue(entry);
+        } else {
+            mydb.execSQL("INSERT INTO " + tableName + " (date, time, party_name, amount, narration) VALUES (?, ?, ?, ?, ?)",
+                    new Object[]{date, time, partyName, amount, narration});
+        }
     }
-
-    public void saveExpense(SQLiteDatabase mydb, String date, String time, String partyName, double amount, String narration) {
-        mydb.execSQL("INSERT INTO EXPENSE (date, time, party_name, amount, narration) VALUES (?, ?, ?, ?, ?)",
-                new Object[]{date, time, partyName, amount, narration});
-    }
-
-    public void saveLend(SQLiteDatabase mydb, String date, String time, String partyName, double amount, String narration) {
-        mydb.execSQL("INSERT INTO LEND (date, time, party_name, amount, narration) VALUES (?, ?, ?, ?, ?)",
-                new Object[]{date, time, partyName, amount, narration});
-    }
-
 
 }

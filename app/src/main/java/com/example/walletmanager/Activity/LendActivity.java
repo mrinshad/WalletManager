@@ -6,9 +6,11 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -58,7 +60,9 @@ public class LendActivity extends AppCompatActivity {
     String currTime = time.format(c);
     StringBuilder date;
     private MyDatabaseHelper databaseHelper;
+    private boolean isFirebaseMode;
 
+    private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +70,9 @@ public class LendActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         layout = findViewById(R.id.lendlayout);
 
+        // Getting the value of firebase_mode from sharedPreference
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        isFirebaseMode = sharedPreferences.getBoolean("firebase_mode", false);
         databaseHelper = new MyDatabaseHelper(this);
         // DATE PICKER
         try {
@@ -104,30 +111,30 @@ public class LendActivity extends AppCompatActivity {
     }
 
     public void saveButton(View v) {
+        amountString = amountInputLayout.getEditText().getText().toString();
+        narrationString = narrationInputLayout.getEditText().getText().toString();
+        String date = dateFinal;
+        String party = partyButton.getText().toString();
+        SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+        String datetime = ft.format(new Date());
+        if (party.equals("PARTY")) {
+            Snackbar.make(layout, "Please select a party", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        if (amountString.isEmpty()) {
+            amountInputLayout.setError("Field cannot be empty");
+            return;
+        }
         try {
-            amountString = amountInputLayout.getEditText().getText().toString();
-            narrationString = narrationInputLayout.getEditText().getText().toString();
-            String date = dateFinal;
-            String party = partyButton.getText().toString();
-            if (party.equals("PARTY")) {
-                Snackbar.make(layout, "Please select a party", Snackbar.LENGTH_SHORT).show();
-                return;
-            }
-            if (amountString.isEmpty()) {
-                amountInputLayout.setError("Field cannot be empty");
-                return;
-            }
-
-            mydb = openOrCreateDatabase(db.DBNAME, 0, null);
-            mydb.execSQL("INSERT INTO LEND (date,time,party_name,amount,narration) VALUES ('" + date + "','" + currTime + "','" + party + "','" + amountString + "','" + narrationString + "')");
-            mydb.close();
-            Snackbar.make(layout, "Lend recorded", Snackbar.LENGTH_SHORT).show();
+            SQLiteDatabase mydb = databaseHelper.getWritableDatabase();
+            databaseHelper.saveELB(datetime, isFirebaseMode, "LEND", mydb, date, currTime, party, Double.parseDouble(amountString), narrationString);
             finish();
+//                Snackbar.make(relativeLayout, "Borrow recorded", Snackbar.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
+    }
 
     @Override
     protected Dialog onCreateDialog(int id) {

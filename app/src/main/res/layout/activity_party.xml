@@ -44,7 +44,8 @@
         android:id="@+id/listview_party"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar" />
+        android:layout_below="@+id/toolbar"
+        android:visibility="invisible"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_action_button"
@@ -61,5 +62,13 @@
         app:backgroundTint="@color/colorPrimaryDark"
         app:srcCompat="@drawable/ic_plus_24"
         app:tint="@color/white" />
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
 
 </RelativeLayout>
