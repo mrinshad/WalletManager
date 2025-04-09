@@ -40,8 +40,8 @@ public class ReportActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ReportPagerAdapter adapter = new ReportPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ExpenseReportActivity(), "Lend");
-        adapter.addFragment(new LendReportActivity(), "Expense");
+        adapter.addFragment(new ExpenseReportActivity(), "Expense");
+        adapter.addFragment(new LendReportActivity(), "Lend");
         adapter.addFragment(new BorrowReportActivity(), "Borrow");
         viewPager.setAdapter(adapter);
     }
