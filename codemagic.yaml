@@ -1,0 +1,23 @@
+workflows:
+  android-java-workflow:
+    name: Build APK for Android Java Project
+    max_build_duration: 30
+    environment:
+      vars:
+        JAVA_HOME: /usr/lib/jvm/java-11-openjdk
+      android:
+        sdk: 33
+    scripts:
+      - name: Clean project
+        script: ./gradlew clean
+      - name: Build debug APK
+        script: ./gradlew assembleDebug
+    artifacts:
+      - build/app/outputs/apk/debug/app-debug.apk
+    publishing:
+      email:
+        recipients:
+          - rinshadmorayur09@gmail.com
+        notify:
+          success: true
+          failure: true
