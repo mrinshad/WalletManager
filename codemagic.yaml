@@ -1,22 +1,21 @@
 workflows:
-  android-java-windows:
-    name: Build APK on Windows
+  android-java-macos:
+    name: Build APK on macOS (free tier)
     max_build_duration: 30
-    instance_type: windows_x2
     environment:
       vars:
-        JAVA_HOME: "C:\\Program Files\\OpenJDK\\jdk-17"
+        JAVA_HOME: /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
     scripts:
-      - name: Print Java version
+      - name: Check Java version
         script: |
-          echo %JAVA_HOME%
-          "%JAVA_HOME%\\bin\\java.exe" -version
+          echo $JAVA_HOME
+          $JAVA_HOME/bin/java -version
       - name: Clean project
-        script: .\\gradlew clean
+        script: ./gradlew clean
       - name: Build debug APK
-        script: .\\gradlew assembleDebug
+        script: ./gradlew assembleDebug
     artifacts:
-      - app\\build\\outputs\\apk\\debug\\app-debug.apk
+      - app/build/outputs/apk/debug/app-debug.apk
     publishing:
       email:
         recipients:
