@@ -6,10 +6,8 @@ workflows:
       vars:
         JAVA_HOME: /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
     scripts:
-      - name: Check Java version
-        script: |
-          echo $JAVA_HOME
-          $JAVA_HOME/bin/java -version
+      - name: Make gradlew executable
+        script: chmod +x ./gradlew
       - name: Clean project
         script: ./gradlew clean
       - name: Build debug APK
